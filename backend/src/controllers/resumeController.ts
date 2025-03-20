@@ -290,38 +290,38 @@ export class ResumeController {
     const resumeTitle = `Resume ${new Date().toLocaleDateString()}`;
     
     return {
-      userId: userId === 'anonymous' ? '000000000000000000000000' : userId,
+      userId: userId === "anonymous" ? "000000000000000000000000" : userId,
       title: resumeTitle,
       personalInfo: {
-        firstName: parseResult.personalInfo?.firstName || 'Anonymous',
-        lastName: parseResult.personalInfo?.lastName || 'User',
-        email: parseResult.personalInfo?.email || 'anonymous@example.com',
-        phone: parseResult.personalInfo?.phone || '000-000-0000',
-        location: parseResult.personalInfo?.location || 'Not Specified',
-        title: parseResult.personalInfo?.title || 'Resume',
+        firstName: parseResult.basicInfo?.name || "Anonymous",
+        lastName: "",
+        email: parseResult.basicInfo?.email || "anonymous@example.com",
+        phone: parseResult.basicInfo?.mobile || "000-000-0000",
+        location: parseResult.basicInfo?.address || "Not Specified",
+        title: "Resume",
       },
       skills: [
-        ...parseResult.technicalSkills.map(skill => ({
+        ...parseResult.technicalSkills.map((skill) => ({
           id: uuidv4(),
           name: String(skill),
-          level: 'intermediate' as const,
-          keywords: [String(skill)]
+          level: "intermediate" as const,
+          keywords: [String(skill)],
         })),
-        ...parseResult.softSkills.map(skill => ({
+        ...parseResult.softSkills.map((skill) => ({
           id: uuidv4(),
           name: String(skill),
-          level: 'intermediate' as const,
-          keywords: [String(skill)]
-        }))
+          level: "intermediate" as const,
+          keywords: [String(skill)],
+        })),
       ],
       parsedData: {
         rawText: parseResult.text,
         keywords: this.convertToKeywordMap([
           ...parseResult.industryKeywords,
-          ...parseResult.actionVerbs
+          ...parseResult.actionVerbs,
         ]),
-        atsScore: parseResult.atsScore
-      }
+        atsScore: parseResult.atsScore,
+      },
     };
   }
 

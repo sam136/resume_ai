@@ -74,6 +74,35 @@ export interface ResumeData {
     rawText: string;
     keywords: Keywords;
     atsScore: number;
+    technicalSkills?: ParsedSkill[];
+    softSkills?: ParsedSkill[];
+    industryKeywords?: string[];
+    certifications?: string[];
+    actionVerbs?: string[];
+    basicInfo?: {
+      name: string;
+      email: string;
+      mobile: string;
+      address: string;
+    };
+    skills?: {
+      currentSkills: string[];
+      recommendedSkills: string[];
+    };
+    courseRecommendations?: {
+      platform: string;
+      courseName: string;
+      link: string;
+    }[];
+    appreciation?: string[];
+    resumeTips?: string[];
+    aiResumeSummary?: string;
+    matchingJobRoles?: string[];
+    atsKeywords?: string[];
+    projectSuggestions?: {
+      improvementTips: string[];
+      newProjectRecommendations: string[];
+    };
   };
   createdAt?: Date;
   updatedAt?: Date;
@@ -92,34 +121,29 @@ export interface ParsedResume {
   industryKeywords: string[];
   certifications: string[];
   actionVerbs: string[];
-  atsScore: number;
-  personalInfo?: {
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    phone?: string;
-    location?: string;
-    title?: string;
+  basicInfo: {
+    name: string;
+    email: string;
+    mobile: string;
+    address: string;
   };
-  summary?: string;
-  experience?: Array<{
-    title: string;
-    company: string;
-    location?: string;
-    startDate: string;
-    endDate: string;
-    highlights: string[];
-    keywords: string[];
-    description?: string;
-  }>;
-  education?: Array<{
-    degree: string;
-    institution: string;
-    field: string;
-    location?: string;
-    startDate: string;
-    endDate: string;
-    gpa?: number;
-    highlights: string[];
-  }>;
+  skills: {
+    currentSkills: string[];
+    recommendedSkills: string[];
+  };
+  courseRecommendations: {
+    platform: string;
+    courseName: string;
+    link: string;
+  }[];
+  appreciation: string[];
+  resumeTips: string[];
+  atsScore: number;
+  aiResumeSummary: string;
+  matchingJobRoles: string[];
+  atsKeywords: string[];
+  projectSuggestions: {
+    improvementTips: string[];
+    newProjectRecommendations: string[];
+  };
 }

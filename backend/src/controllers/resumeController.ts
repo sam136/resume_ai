@@ -36,7 +36,7 @@ export class ResumeController {
       }
 
       const query = new QueryBuilder<ResumeData>()
-        .filter({ userId })
+        .filter({ })
         .sort({ updatedAt: -1 })
         .build();
 
@@ -118,7 +118,8 @@ export class ResumeController {
           rawText: '',
           keywords: {},
           atsScore: 0
-        }
+        },
+        atsKeywords:  ['Python','SDE','MERN','FullStack'],
       };
 
       logger.info('Creating resume with data:', enrichedResumeData);

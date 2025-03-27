@@ -1,102 +1,149 @@
 {
-    "basicInfo": {
-        "name": "Sneh Shah",
-        "email": "snehpshah5721@gmail.com",
-        "mobile": "+91 9824501807",
-        "address": "Ahmedabad,Gujarat"
+  "basicInfo": {
+    "name": "Sneh Shah",
+    "email": "snehpshah5721@gmail.com",
+    "mobile": "+91 9824501807",
+    "address": "Ahmedabad,Gujarat"
+  },
+  "skills": {
+    "currentSkills": [
+      "Python",
+      "React.js",
+      "Node.js",
+      "MongoDB",
+      "Firebase",
+      "React Native",
+      "Flutter",
+      "Git",
+      "REST API"
+    ],
+    "recommendedSkills": [
+      "AWS/Azure/GCP Cloud Services",
+      "CI/CD Pipelines",
+      "GraphQL",
+      "Docker",
+      "Kubernetes",
+      "Testing Frameworks (e.g., Jest, Mocha)",
+      "UI/UX Design Principles"
+    ]
+  },
+  "courseRecommendations": [
+    {
+      "platform": "Coursera",
+      "course_name": "Full-Stack Web Development with React Specialization",
+      "link": "https://www.coursera.org/specializations/full-stack-react"
     },
-    "skills": {
-        "currentSkills": [
-            "Python",
-            "React.js",
-            "Node.js",
-            "MongoDB",
-            "Firebase",
-            "React Native",
-            "Flutter",
-            "Git",
-            "REST API"
-        ],
-        "recommendedSkills": [
-            "AWS/Azure/GCP Cloud Services",
-            "CI/CD Pipelines",
-            "GraphQL",
-            "Docker",
-            "Kubernetes",
-            "Testing Frameworks (e.g., Jest, Mocha)",
-             "UI/UX Design Principles"
-        ]
+    {
+      "platform": "Udemy",
+      "course_name": "Docker and Kubernetes: The Complete Guide",
+      "link": "https://www.udemy.com/course/docker-and-kubernetes-the-complete-guide/"
     },
-    "courseRecommendations": [
-        {
-            "platform": "Coursera",
-            "course_name": "Full-Stack Web Development with React Specialization",
-            "link": "https://www.coursera.org/specializations/full-stack-react"
-        },
-        {
-            "platform": "Udemy",
-            "course_name": "Docker and Kubernetes: The Complete Guide",
-            "link": "https://www.udemy.com/course/docker-and-kubernetes-the-complete-guide/"
-        },
-        {
-            "platform": "freeCodeCamp",
-            "course_name": "Responsive Web Design",
-            "link": "https://www.freecodecamp.org/learn/responsive-web-design/"
-        },
-         {
-            "platform": "edX",
-            "course_name": "MicroMasters® Program in Cloud Computing",
-            "link": "https://www.edx.org/micromasters/ritx-cloud-computing"
-        },
-        {
-            "platform": "YouTube",
-            "course_name": "JavaScript Tutorial for Beginners",
-            "link": "https://www.youtube.com/watch?v=W6NZfCO5SIk"
-        }
-    ],
-    "appreciation": [
-        "Excellent projects demonstrating full-stack development skills.",
-        "Strong foundation in both mobile and web development.",
-        "Active involvement in technical communities and clubs.",
-        "Good use of MERN stack in project development.",
-        "Clear demonstration of initiative through freelance work and internships."
-    ],
-    "resumeTips": [
-        "Quantify achievements in project descriptions to showcase impact.",
-        "Include specific examples of problem-solving in your experience section.",
-        "Tailor your resume to each job application, highlighting the most relevant skills.",
-        "Add a brief personal statement or summary at the top of your resume.",
-        "Consider adding a section for open-source contributions if applicable."
-    ],
-    "atsScore": 85,
-    "aiResumeSummary": "Enthusiastic B.Tech IT student with experience in full-stack development, MERN stack, React Native, and Flutter. Proven ability to develop and deploy web and mobile applications. Actively involved in technical communities, demonstrating leadership and teamwork skills. Seeking opportunities to apply and expand skills in a dynamic environment.",
-    "matchingJobRoles": [
-        "Frontend Developer Intern",
-        "Junior Full-Stack Developer",
-        "Mobile App Developer Intern"
-    ],
-    "atsKeywords": [
-        "React",
-        "Node.js",
-        "MongoDB",
-        "Flutter",
-        "REST API",
-        "JavaScript",
-        "MERN Stack",
-        "Mobile Development",
-        "Web Development",
-        "Firebase"
-    ],
-    "projectSuggestions": {
-        "improvementTips": [
-            "Incorporate unit tests into your projects for better code reliability.",
-            "Add CI/CD pipelines to automate deployment processes.",
-            "Focus on improving the UI/UX of your projects for better user engagement."
-        ],
-        "newProjectRecommendations": [
-            "Develop a personal portfolio website to showcase your projects and skills.",
-            "Contribute to an open-source project to gain experience with collaborative development.",
-            "Create a REST API using Node.js and Express, focusing on best practices for API design and security."
-        ]
+    {
+      "platform": "freeCodeCamp",
+      "course_name": "Responsive Web Design",
+      "link": "https://www.freecodecamp.org/learn/responsive-web-design/"
+    },
+    {
+      "platform": "edX",
+      "course_name": "MicroMasters® Program in Cloud Computing",
+      "link": "https://www.edx.org/micromasters/ritx-cloud-computing"
+    },
+    {
+      "platform": "YouTube",
+      "course_name": "JavaScript Tutorial for Beginners",
+      "link": "https://www.youtube.com/watch?v=W6NZfCO5SIk"
     }
+  ],
+  "appreciation": [
+    "Excellent projects demonstrating full-stack development skills.",
+    "Strong foundation in both mobile and web development.",
+    "Active involvement in technical communities and clubs.",
+    "Good use of MERN stack in project development.",
+    "Clear demonstration of initiative through freelance work and internships."
+  ],
+  "resumeTips": [
+    "Quantify achievements in project descriptions to showcase impact.",
+    "Include specific examples of problem-solving in your experience section.",
+    "Tailor your resume to each job application, highlighting the most relevant skills.",
+    "Add a brief personal statement or summary at the top of your resume.",
+    "Consider adding a section for open-source contributions if applicable."
+  ],
+  "atsScore": 85,
+  "aiResumeSummary": "Enthusiastic B.Tech IT student with experience in full-stack development, MERN stack, React Native, and Flutter. Proven ability to develop and deploy web and mobile applications. Actively involved in technical communities, demonstrating leadership and teamwork skills. Seeking opportunities to apply and expand skills in a dynamic environment.",
+  "matchingJobRoles": [
+    "Frontend Developer Intern",
+    "Junior Full-Stack Developer",
+    "Mobile App Developer Intern"
+  ],
+  "atsKeywords": [
+    "React",
+    "Node.js",
+    "MongoDB",
+    "Flutter",
+    "REST API",
+    "JavaScript",
+    "MERN Stack",
+    "Mobile Development",
+    "Web Development",
+    "Firebase"
+  ],
+  "projectSuggestions": {
+    "improvementTips": [
+      "Incorporate unit tests into your projects for better code reliability.",
+      "Add CI/CD pipelines to automate deployment processes.",
+      "Focus on improving the UI/UX of your projects for better user engagement."
+    ],
+    "newProjectRecommendations": [
+      "Develop a personal portfolio website to showcase your projects and skills.",
+      "Contribute to an open-source project to gain experience with collaborative development.",
+      "Create a REST API using Node.js and Express, focusing on best practices for API design and security."
+    ]
+  },
+  "relevantSkillsScore": [
+    {
+      "skill": "React.js",
+      "score": 90
+    },
+    {
+      "skill": "Node.js",
+      "score": 85
+    },
+    {
+      "skill": "MongoDB",
+      "score": 80
+    },
+    {
+      "skill": "Firebase",
+      "score": 75
+    },
+    {
+      "skill": "React Native",
+      "score": 70
+    }
+  ],
+  "jobLevelScore": [
+    { "level": "Intern", "score": 80 },
+    { "level": "Entry Level", "score": 85 },
+    { "level": "Mid Level", "score": 70 }
+  ],
+  "careerGrowthTrajectory":[
+    {
+      "currentRole": "Frontend Developer Intern",
+      "nextRole": "Junior Full-Stack Developer",
+      "futureRoles": [
+        "Full-Stack Developer",
+        "Senior Software Engineer",
+        "Technical Lead",
+        "Engineering Manager",
+        "CTO"
+      ],
+      "suggestions": [
+        "Gain expertise in backend technologies like Node.js and databases such as MongoDB.",
+        "Learn and implement DevOps practices, including CI/CD pipelines and containerization with Docker.",
+        "Contribute to open-source projects to build a strong developer portfolio.",
+        "Develop leadership and project management skills to transition into senior roles.",
+        "Stay updated with emerging technologies like AI/ML, blockchain, or cloud computing to remain competitive."
+      ]
+    }
+  ]
 }

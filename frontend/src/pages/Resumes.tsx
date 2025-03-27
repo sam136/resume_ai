@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { FileText, Plus, Search, Filter, MoreVertical, Edit, Trash2, Upload, X, AlertCircle, Check } from 'lucide-react';
+import { FileText, Plus, Search, Edit, Trash2, Upload, X, AlertCircle, Check, Save } from 'lucide-react';
 import resumeService, { Resume } from '../services/resumeService';
 import { ResumeUpload } from '../components/resume/ResumeUpload';
 import { useSelector } from 'react-redux';
@@ -13,7 +13,6 @@ const Resumes = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [showDropdownId, setShowDropdownId] = useState<string | null>(null);
   
   // Resume upload state
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -28,6 +27,11 @@ const Resumes = () => {
   } | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // State for inline title editing
+  const [editingResumeId, setEditingResumeId] = useState<string | null>(null);
+  const [editingTitle, setEditingTitle] = useState('');
+  const editInputRef = useRef<HTMLInputElement>(null);
 
   const handleUpload = (e?: React.MouseEvent) => {
     if (e) {
@@ -69,7 +73,6 @@ const Resumes = () => {
         setError('Failed to delete resume. Please try again.');
       }
     }
-    setShowDropdownId(null);
   };
 
   const handleCreateNew = () => {
@@ -163,7 +166,6 @@ const Resumes = () => {
         atsScore: data.atsScore,
         keywords: data.keywords,
         skills: data.skills,
-        status: 'Draft'
       };
       
       const savedResume = await resumeService.createResume(resumeData);
@@ -203,8 +205,50 @@ const Resumes = () => {
     }
   };
 
-  const toggleDropdown = (id: string) => {
-    setShowDropdownId(showDropdownId === id ? null : id);
+  // Function to start editing a resume title
+  const startEditingTitle = (resume: Resume) => {
+    setEditingResumeId(resume.id);
+    setEditingTitle(resume.title);
+    setTimeout(() => {
+      if (editInputRef.current) {
+        editInputRef.current.focus();
+      }
+    }, 0);
+  };
+
+  // Function to save a resume title after editing
+  const saveResumeTitle = async () => {
+    if (!editingResumeId) return;
+    
+    try {
+      const resumeToUpdate = resumes.find(r => r.id === editingResumeId);
+      if (!resumeToUpdate) return;
+      
+      const updatedResume = await resumeService.updateResume(editingResumeId, {
+        ...resumeToUpdate,
+        title: editingTitle
+      });
+      
+      setResumes(prevResumes => 
+        prevResumes.map(resume => 
+          resume.id === editingResumeId ? {...resume, title: editingTitle} : resume
+        )
+      );
+      
+      setEditingResumeId(null);
+    } catch (err) {
+      console.error('Failed to update resume title:', err);
+      setError('Failed to update resume title. Please try again.');
+    }
+  };
+
+  // Function to handle pressing Enter while editing
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      saveResumeTitle();
+    } else if (e.key === 'Escape') {
+      setEditingResumeId(null);
+    }
   };
 
   const filteredResumes = searchQuery
@@ -262,7 +306,7 @@ const Resumes = () => {
           </button>
         </div>
 
-        {/* Search and Actions */}
+        {/* Search and Actions - removed filter button */}
         <div className="flex space-x-4 mb-6">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -274,10 +318,7 @@ const Resumes = () => {
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
-          <button className="flex items-center px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50">
-            <Filter className="h-5 w-5 mr-2" />
-            Filter
-          </button>
+          {/* Removed filter button here */}
           <button 
             onClick={handleUpload}
             className="flex items-center px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
@@ -322,7 +363,6 @@ const Resumes = () => {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Resume</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Modified</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ATS Score</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
@@ -332,7 +372,35 @@ const Resumes = () => {
                     <td className="px-6 py-4">
                       <div className="flex items-center">
                         <FileText className="h-5 w-5 text-gray-400 mr-3" />
-                        <span className="text-sm font-medium text-gray-900">{resume.title}</span>
+                        {editingResumeId === resume.id ? (
+                          <div className="flex items-center">
+                            <input
+                              ref={editInputRef}
+                              type="text"
+                              value={editingTitle}
+                              onChange={(e) => setEditingTitle(e.target.value)}
+                              onKeyDown={handleKeyDown}
+                              onBlur={saveResumeTitle}
+                              className="text-sm font-medium text-gray-900 border-b border-indigo-500 focus:outline-none"
+                            />
+                            <button 
+                              onClick={saveResumeTitle}
+                              className="ml-2 text-indigo-600 hover:text-indigo-800"
+                            >
+                              <Save className="h-4 w-4" />
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center">
+                            <span className="text-sm font-medium text-gray-900">{resume.title}</span>
+                            <button 
+                              onClick={() => startEditingTitle(resume)}
+                              className="ml-2 text-gray-400 hover:text-indigo-600"
+                            >
+                              <Edit className="h-3 w-3" />
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-500">
@@ -349,36 +417,24 @@ const Resumes = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${resume.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
-                        {resume.status || 'Draft'}
-                      </span>
-                    </td>
                     <td className="px-6 py-4 text-right relative">
-                      <button 
-                        className="text-gray-400 hover:text-gray-500"
-                        onClick={() => toggleDropdown(resume.id)}
-                      >
-                        <MoreVertical className="h-5 w-5" />
-                      </button>
-                      {showDropdownId === resume.id && (
-                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200">
-                          <Link 
-                            to={`/resumes/${resume.id}/edit`}
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          >
-                            <Edit className="h-4 w-4 mr-2" />
-                            Edit Resume
-                          </Link>
-                          <button 
-                            onClick={() => handleDelete(resume.id)}
-                            className="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                          >
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Delete Resume
-                          </button>
-                        </div>
-                      )}
+                      {/* Direct action icons instead of dropdown */}
+                      <div className="flex items-center justify-end space-x-2">
+                        {/* Edit icon/functionality commented out
+                        <Link 
+                          to={`/resumes/${resume.id}/edit`}
+                          className="text-gray-400 hover:text-indigo-600 p-1"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Link>
+                        */}
+                        <button 
+                          onClick={() => handleDelete(resume.id)}
+                          className="text-gray-400 hover:text-red-600 p-1"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

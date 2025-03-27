@@ -5,14 +5,38 @@ import { FileText, Github, Mail, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { setLoading, setError, setCredentials } from '../store/authSlice';
 import type { RootState, AppDispatch } from '../store';
 import authService from '../services/authService';
-import LoginDebug from '../components/common/LoginDebug';
-import TestUserCreator from '../components/common/TestUserCreator';
-import PasswordDebug from '../components/common/PasswordDebug';
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { loading, error } = useSelector((state: RootState) => state.auth);
+
+  // Add this new useEffect for authentication check
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      // If token exists, verify it and redirect
+      authService.verifyToken(token)
+        .then((response) => {
+          dispatch(setCredentials({
+            user: {
+              ...response.user,
+              preferences: response.user.preferences || {
+                theme: 'light',
+                emailNotifications: true,
+                jobAlerts: true
+              }
+            },
+            token
+          }));
+          navigate('/dashboard');
+        })
+        .catch(() => {
+          // If token is invalid, remove it
+          localStorage.removeItem('token');
+        });
+    }
+  }, [navigate, dispatch]);
   
   const [formData, setFormData] = useState({
     email: '',
@@ -231,9 +255,6 @@ const Login = () => {
           </div>
         </div>
       </div>
-      <LoginDebug />
-      {process.env.NODE_ENV !== 'production' && <TestUserCreator />}
-      {process.env.NODE_ENV !== 'production' && <PasswordDebug />}
     </div>
   );
 };

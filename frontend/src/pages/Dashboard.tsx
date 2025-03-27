@@ -1,18 +1,15 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { FileText, Upload, Zap, BarChart } from 'lucide-react';
+import { FileText, Zap } from 'lucide-react';
 import type { RootState } from '../store';
 import { LoadingState, initialLoadingState } from '../types/loading';
-import resumeService from '../services/resumeService';
 import jobService from '../services/jobService';
-import api from '../services/api';
+import { getUserResumes, Resume } from '../services/resumeService';
 
 interface DashboardMetrics {
   activeResumes: number;
-  totalApplications: number;
   averageATSScore: number;
-  interviewRate: number;
 }
 
 interface RecentActivity {
@@ -37,52 +34,55 @@ interface Job {
   url: string;
 }
 
-interface ApplicationStats {
-  total: number;
-  interviews: number;
-  rejected: number;
-  pending: number;
-}
-
 const Dashboard = () => {
   const [{ isLoading, error }, setLoadingState] = useState<LoadingState>(initialLoadingState);
-  const { resumes, atsScores } = useSelector((state: RootState) => state.resume);
+  const [userResumes, setUserResumes] = useState<Resume[]>([]);
   const user = useSelector((state: RootState) => state.auth.user);
   const [savedJobs, setSavedJobs] = useState<Job[]>([]);
-  const [applicationStats, setApplicationStats] = useState<ApplicationStats>({
-    total: 0,
-    interviews: 0,
-    rejected: 0,
-    pending: 0
-  });
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       setLoadingState({ isLoading: true, error: null });
       try {
+        // Fetch resumes
+        const resumesResponse = await getUserResumes();
+        // setUserResumes([
+        //   {
+        //     createdAt: new Date().toISOString(),
+        //     updatedAt: new Date().toISOString(),
+        //     id: '1',
+        //     title: 'Sample Resume',
+        //     content: 'This is a sample resume content.',
+        //     atsScore: 80,
+        //   },
+        //   {
+        //     createdAt: new Date().toISOString(),
+        //     updatedAt: new Date().toISOString(),
+        //     id: '1',
+        //     title: 'Sample Resume',
+        //     content: 'This is a sample resume content.',
+        //     atsScore: 85,
+        //   },
+        //   {
+        //     createdAt: new Date().toISOString(),
+        //     updatedAt: new Date().toISOString(),
+        //     id: '1',
+        //     title: 'Sample Resume',
+        //     content: 'This is a sample resume content.',
+        //     atsScore: 85,
+        //   },
+        // ]);
+
+        setUserResumes(resumesResponse)
+        console.log('Fetched resumes:', [1,2,3]);
+
         // Fetch saved jobs
         try {
           const jobsResponse = await jobService.getSavedJobs();
           setSavedJobs(jobsResponse.slice(0, 3));
         } catch (jobsError) {
           console.error('Failed to fetch saved jobs:', jobsError);
-          // Continue with empty jobs rather than failing the whole dashboard
           setSavedJobs([]);
-        }
-
-        // Fetch application stats
-        try {
-          const statsResponse = await api.get('/applications/stats');
-          setApplicationStats(statsResponse.data);
-        } catch (statsError) {
-          console.error('Failed to fetch application stats:', statsError);
-          // Use default stats rather than failing
-          setApplicationStats({
-            total: 0,
-            interviews: 0,
-            rejected: 0,
-            pending: 0
-          });
         }
 
         setLoadingState({ isLoading: false, error: null });
@@ -98,20 +98,23 @@ const Dashboard = () => {
     fetchDashboardData();
   }, []);
 
-  const metrics: DashboardMetrics = useMemo(() => ({
-    activeResumes: resumes.length,
-    totalApplications: applicationStats.total,
-    averageATSScore: Object.values(atsScores).reduce(
-      (acc, score) => acc + score.overall,
-      0
-    ) / Math.max(Object.values(atsScores).length, 1),
-    interviewRate: applicationStats.total > 0 
-      ? Math.round((applicationStats.interviews / applicationStats.total) * 100)
-      : 0,
-  }), [resumes, atsScores, applicationStats]);
+  const metrics: DashboardMetrics = useMemo(() => {
+    console.log('Calculating metrics with resumes:', userResumes);
+
+    // Get the latest resume by comparing createdAt timestamps
+    const latestResume = userResumes
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
+    
+    console.log('Latest resume:', latestResume);
+
+    return {
+      activeResumes: userResumes.length,
+      averageATSScore: latestResume?.atsScore || 0,
+    };
+  }, [userResumes]);
 
   const recentActivity = useMemo(() => 
-    resumes
+    userResumes
       .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
       .slice(0, 3)
       .map(resume => ({
@@ -120,24 +123,32 @@ const Dashboard = () => {
         description: `${resume.title} Updated`,
         timestamp: new Date(resume.updatedAt).toLocaleString(),
       })),
-  [resumes]);
+  [userResumes]);
 
   const optimizationTips = useMemo(() => {
     const tips: OptimizationTip[] = [];
     
-    Object.entries(atsScores).forEach(([resumeId, score]) => {
-      score.recommendations.forEach(rec => {
+    // Get the latest resume first
+    const latestResume = userResumes
+      .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())[0];
+
+    if (latestResume && latestResume.atsFeedback) {
+      // Split feedback into separate tips
+      const feedbackLines = latestResume.atsFeedback.split('\n').filter(line => line.trim());
+      
+      feedbackLines.forEach((line, index) => {
         tips.push({
-          id: `${resumeId}-${rec.section}`,
-          type: rec.priority,
-          title: rec.message,
-          description: rec.action,
+          id: `${latestResume.id}-${index}`,
+          type: latestResume.atsScore > 70 ? 'low' : 
+                latestResume.atsScore > 40 ? 'medium' : 'high',
+          title: 'ATS Recommendation',
+          description: line
         });
       });
-    });
+    }
 
     return tips.slice(0, 3);
-  }, [atsScores]);
+  }, [userResumes]);
 
   if (isLoading) {
     return <div className="flex justify-center items-center h-96">Loading...</div>;
@@ -167,23 +178,13 @@ const Dashboard = () => {
       </div>
 
       {/* Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white p-6 rounded-lg shadow">
           <div className="flex items-center">
             <FileText className="h-10 w-10 text-indigo-600" />
             <div className="ml-4">
               <h2 className="text-lg font-semibold text-gray-900">Active Resumes</h2>
               <p className="text-3xl font-bold text-gray-700">{metrics.activeResumes}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="flex items-center">
-            <Upload className="h-10 w-10 text-green-600" />
-            <div className="ml-4">
-              <h2 className="text-lg font-semibold text-gray-900">Applications</h2>
-              <p className="text-3xl font-bold text-gray-700">{metrics.totalApplications}</p>
             </div>
           </div>
         </div>
@@ -197,41 +198,6 @@ const Dashboard = () => {
                 {Math.round(metrics.averageATSScore)}%
               </p>
             </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="flex items-center">
-            <BarChart className="h-10 w-10 text-purple-600" />
-            <div className="ml-4">
-              <h2 className="text-lg font-semibold text-gray-900">Interview Rate</h2>
-              <p className="text-3xl font-bold text-gray-700">
-                {Math.round(metrics.interviewRate)}%
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Application Stats */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Application Statistics</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-gray-50 p-4 rounded-md">
-            <p className="text-gray-500 text-sm">Total Applications</p>
-            <p className="text-2xl font-bold text-blue-600">{applicationStats.total}</p>
-          </div>
-          <div className="bg-gray-50 p-4 rounded-md">
-            <p className="text-gray-500 text-sm">Interviews</p>
-            <p className="text-2xl font-bold text-green-600">{applicationStats.interviews}</p>
-          </div>
-          <div className="bg-gray-50 p-4 rounded-md">
-            <p className="text-gray-500 text-sm">Rejected</p>
-            <p className="text-2xl font-bold text-red-600">{applicationStats.rejected}</p>
-          </div>
-          <div className="bg-gray-50 p-4 rounded-md">
-            <p className="text-gray-500 text-sm">Pending</p>
-            <p className="text-2xl font-bold text-yellow-600">{applicationStats.pending}</p>
           </div>
         </div>
       </div>

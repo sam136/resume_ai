@@ -4,7 +4,10 @@ export interface Resume {
   id: string;
   title: string;
   content: string;
-  atsScore?: number;
+  atsScore: number;
+  atsStatus: 'draft' | 'submitted' | 'reviewing' | 'accepted' | 'rejected';
+  atsKeywords: string[];
+  atsFeedback?: string;
   keywords?: string[];
   skills?: string[];
   status?: string;
@@ -125,6 +128,60 @@ const resumeService = {
       throw new Error(errorMessage || 'Failed to parse resume');
     }
   },
+  
+  // Add the missing updateResume method
+  updateResume: async (id: string, data: Partial<Resume>): Promise<Resume> => {
+    try {
+      const response = await api.put(`/resumes/${id}`, data);
+      return response.data;
+    } catch (error: any) {
+      console.error('Resume update failed:', {
+        error: error.response?.data,
+        status: error.response?.status
+      });
+      
+      if (error.response?.status === 401) {
+        localStorage.removeItem('token'); // Clear invalid token
+        throw new Error('Authentication expired. Please log in again.');
+      }
+      throw error;
+    }
+  }
+};
+
+export const getUserResumes = async (): Promise<Resume[]> => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+
+    const response = await api.get('/resumes', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    
+    console.log('Resume fetch response:', {
+      status: response.status,
+      count: response.data?.length || 0,
+      token: token ? `${token.substring(0, 10)}...` : 'none'
+    });
+    
+    return response.data;
+  } catch (error: any) {
+    console.error('Error fetching user resumes:', {
+      status: error.response?.status,
+      data: error.response?.data,
+      message: error.message
+    });
+    
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token'); // Clear invalid token
+      throw new Error('Authentication expired. Please log in again.');
+    }
+    throw error;
+  }
 };
 
 export default resumeService;

@@ -135,6 +135,21 @@ const authService = {
       console.error('Profile update failed:', error);
       throw error;
     }
+  },
+
+  verifyToken: async (token: string) => {
+    try {
+      const response = await api.post<AuthResponse>('/auth/verify', { token });
+      return response.data;
+    } catch (error: unknown) {
+      console.error('Token verification failed:', error);
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          throw new Error('Invalid or expired token');
+        }
+      }
+      throw new Error('Failed to verify token');
+    }
   }
 };
 

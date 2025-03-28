@@ -92,20 +92,28 @@ const resumeService = {
     }
 
     try {
-      const response = await api.post('/resumes/parse', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Accept': 'application/json',
-        },
-        timeout: 120000, // Increase timeout for large files to 2 minutes
-        onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 100));
-          console.log('Upload progress:', percentCompleted);
-        },
-      });
+      //THIS IS DIFF
+      // const response = await api.post('/resumes/parse', formData, {
+      const response = await api.post(
+        "http:localhost:8000/upload-resume",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Accept: "application/json",
+          },
+          timeout: 120000, // Increase timeout for large files to 2 minutes
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / (progressEvent.total || 100)
+            );
+            console.log("Upload progress:", percentCompleted);
+          },
+        }
+      );
 
       if (!response.data) {
-        throw new Error('No data received from server');
+        throw new Error("No data received from server");
       }
 
       return response.data;

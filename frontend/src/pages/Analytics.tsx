@@ -11,6 +11,7 @@ const Analytics = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [resumeData, setResumeData] = useState(null); // Initialize resumeData as null
   const analyticsContentRef = useRef<HTMLDivElement>(null);
   
   // Fetch list of available resumes from backend
@@ -48,7 +49,21 @@ const Analytics = () => {
     setIsLoading(true);
     setSelectedResume(resumeName);
     setIsDropdownOpen(false);
-    setIsLoading(false); // Just close the dropdown without fetching data
+
+    try {
+      // Make API call to fetch resume data
+      const response = await fetch(`http://localhost:8000/resume/${resumeId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch resume data');
+      }
+      const data = await response.json();
+      setResumeData(data); // Update resumeData with API response
+    } catch (error) {
+      console.error('Error fetching resume data:', error);
+      showToast({ message: 'Failed to load resume data', type: 'error' });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleExport = async () => {
@@ -136,139 +151,6 @@ const Analytics = () => {
     }
   };
 
-  // Sample data from the JSON file
-  const resumeData = {
-    basicInfo: {
-      name: "Sneh Shah",
-      email: "snehpshah5721@gmail.com"
-    },
-    atsScore: 85,
-    relevantSkillsScore: [
-      { skill: "React.js", score: 90 },
-      { skill: "Node.js", score: 85 },
-      { skill: "MongoDB", score: 80 },
-      { skill: "Firebase", score: 75 },
-      { skill: "React Native", score: 70 }
-    ],
-    jobLevelScore: [
-      { level: "Intern", score: 80 },
-      { level: "Entry Level", score: 85 },
-      { level: "Mid Level", score: 70 }
-    ],
-    careerGrowthTrajectory: [
-      {
-        currentRole: "Frontend Developer Intern",
-        nextRole: "Junior Full-Stack Developer",
-        futureRoles: [
-          "Full-Stack Developer",
-          "Senior Software Engineer",
-          "Technical Lead",
-          "Engineering Manager",
-          "CTO"
-        ],
-        suggestions: [
-          "Gain expertise in backend technologies like Node.js and databases such as MongoDB.",
-          "Learn and implement DevOps practices, including CI/CD pipelines and containerization with Docker.",
-          "Contribute to open-source projects to build a strong developer portfolio.",
-          "Develop leadership and project management skills to transition into senior roles.",
-          "Stay updated with emerging technologies like AI/ML, blockchain, or cloud computing to remain competitive."
-        ]
-      }
-    ],
-    matchingJobRoles: [
-      "Frontend Developer Intern",
-      "Junior Full-Stack Developer",
-      "Mobile App Developer Intern"
-    ],
-    atsKeywords: [
-      "React",
-      "Node.js",
-      "MongoDB",
-      "Flutter",
-      "REST API",
-      "JavaScript",
-      "MERN Stack",
-      "Mobile Development",
-      "Web Development",
-      "Firebase"
-    ],
-    skills: {
-      currentSkills: [
-        "Python",
-        "React.js",
-        "Node.js",
-        "MongoDB",
-        "Firebase",
-        "React Native",
-        "Flutter",
-        "Git",
-        "REST API"
-      ],
-      recommendedSkills: [
-        "AWS/Azure/GCP Cloud Services",
-        "CI/CD Pipelines",
-        "GraphQL",
-        "Docker",
-        "Kubernetes",
-        "Testing Frameworks (e.g., Jest, Mocha)",
-        "UI/UX Design Principles"
-      ]
-    },
-    courseRecommendations: [
-      {
-        platform: "Coursera",
-        course_name: "Full-Stack Web Development with React Specialization",
-        link: "https://www.coursera.org/specializations/full-stack-react"
-      },
-      {
-        platform: "Udemy",
-        course_name: "Docker and Kubernetes: The Complete Guide",
-        link: "https://www.udemy.com/course/docker-and-kubernetes-the-complete-guide/"
-      },
-      {
-        platform: "freeCodeCamp",
-        course_name: "Responsive Web Design",
-        link: "https://www.freecodecamp.org/learn/responsive-web-design/"
-      },
-      {
-        platform: "edX",
-        course_name: "MicroMasters® Program in Cloud Computing",
-        link: "https://www.edx.org/micromasters/ritx-cloud-computing"
-      },
-      {
-        platform: "YouTube",
-        course_name: "JavaScript Tutorial for Beginners",
-        link: "https://www.youtube.com/watch?v=W6NZfCO5SIk"
-      }
-    ],
-    appreciation: [
-      "Excellent projects demonstrating full-stack development skills.",
-      "Strong foundation in both mobile and web development.",
-      "Active involvement in technical communities and clubs.",
-      "Good use of MERN stack in project development.",
-      "Clear demonstration of initiative through freelance work and internships."
-    ],
-    resumeTips: [
-      "Quantify achievements in project descriptions to showcase impact.",
-      "Include specific examples of problem-solving in your experience section.",
-      "Tailor your resume to each job application, highlighting the most relevant skills.",
-      "Add a brief personal statement or summary at the top of your resume.",
-      "Consider adding a section for open-source contributions if applicable."
-    ],
-    projectSuggestions: {
-      improvementTips: [
-        "Incorporate unit tests into your projects for better code reliability.",
-        "Add CI/CD pipelines to automate deployment processes.",
-        "Focus on improving the UI/UX of your projects for better user engagement."
-      ],
-      newProjectRecommendations: [
-        "Develop a personal portfolio website to showcase your projects and skills.",
-        "Contribute to an open-source project to gain experience with collaborative development.",
-        "Create a REST API using Node.js and Express, focusing on best practices for API design and security."
-      ]
-    }
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -329,276 +211,280 @@ const Analytics = () => {
         </div>
       ) : (
         <div ref={analyticsContentRef} className="space-y-6">
-          {/* The rest of the existing UI components remain unchanged */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-lg shadow">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-500">ATS Score</p>
-                  <p className="text-2xl font-semibold text-gray-900">{resumeData.atsScore}%</p>
-                </div>
-                <div className="p-3 bg-purple-100 rounded-full">
-                  <BarChart2 className="h-6 w-6 text-purple-600" />
-                </div>
-              </div>
-              <div className="mt-4">
-                <div className="flex items-center">
-                  <span className="text-sm text-purple-600">Good Score</span>
-                  <span className="ml-2 text-sm text-gray-500">above average</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Job Match Level</p>
-                  <p className="text-2xl font-semibold text-gray-900">Entry Level</p>
-                </div>
-                <div className="p-3 bg-blue-100 rounded-full">
-                  <Users className="h-6 w-6 text-blue-600" />
-                </div>
-              </div>
-              <div className="mt-4">
-                <div className="flex items-center">
-                  <span className="text-sm text-blue-600">{resumeData.jobLevelScore[1].score}%</span>
-                  <span className="ml-2 text-sm text-gray-500">match score</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Best Matching Role</p>
-                  <p className="text-2xl font-semibold text-gray-900">{resumeData.matchingJobRoles[0]}</p>
-                </div>
-                <div className="p-3 bg-green-100 rounded-full">
-                  <TrendingUp className="h-6 w-6 text-green-600" />
-                </div>
-              </div>
-              <div className="mt-4">
-                <div className="flex items-center">
-                  <span className="text-sm text-green-600">High compatibility</span>
-                  <span className="ml-2 text-sm text-gray-500">for current skills</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Top Skills Score</h2>
-              <div className="space-y-4">
-                {resumeData.relevantSkillsScore.map((item) => (
-                  <div key={item.skill} className="flex items-center">
-                    <div className="w-32 text-sm text-gray-500">{item.skill}</div>
-                    <div className="flex-1">
-                      <div className="h-4 bg-gray-100 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-green-600"
-                          style={{ width: `${item.score}%` }}
-                        ></div>
-                      </div>
+          {/* Render UI only if resumeData is available */}
+          {resumeData && (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="bg-white p-6 rounded-lg shadow">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">ATS Score</p>
+                      <p className="text-2xl font-semibold text-gray-900">{resumeData.atsScore}%</p>
                     </div>
-                    <div className="w-16 text-right text-sm text-gray-500">
-                      {item.score}%
+                    <div className="p-3 bg-purple-100 rounded-full">
+                      <BarChart2 className="h-6 w-6 text-purple-600" />
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Job Level Compatibility</h2>
-              <div className="space-y-4">
-                {resumeData.jobLevelScore.map((item) => (
-                  <div key={item.level} className="flex items-center">
-                    <div className="w-32 text-sm text-gray-500">{item.level}</div>
-                    <div className="flex-1">
-                      <div className="h-4 bg-gray-100 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-indigo-600"
-                          style={{ width: `${item.score}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                    <div className="w-16 text-right text-sm text-gray-500">
-                      {item.score}%
+                  <div className="mt-4">
+                    <div className="flex items-center">
+                      <span className="text-sm text-purple-600">Good Score</span>
+                      <span className="ml-2 text-sm text-gray-500">above average</span>
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-          </div>
+                </div>
 
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">ATS Keywords</h2>
-            <div className="flex flex-wrap gap-2">
-              {resumeData.atsKeywords.map((keyword) => (
-                <span 
-                  key={keyword} 
-                  className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
-                >
-                  {keyword}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-lg font-semibold text-gray-900 mb-6">Career Growth Trajectory</h2>
-            
-            <div className="relative">
-              {/* Timeline bar */}
-              <div className="absolute left-0 top-6 w-full h-1 bg-gray-200"></div>
-              
-              {/* Timeline nodes */}
-              <div className="flex justify-between relative">
-                {[resumeData.careerGrowthTrajectory[0].currentRole, 
-                  resumeData.careerGrowthTrajectory[0].nextRole, 
-                  ...resumeData.careerGrowthTrajectory[0].futureRoles].map((role, index) => (
-                  <div key={index} className="flex flex-col items-center relative" style={{width: `${100/(6+1)}%`}}>
-                    <div className={`w-4 h-4 rounded-full z-10 ${index === 0 ? 'bg-green-500' : 'bg-blue-500'}`}></div>
-                    <div className={`mt-4 text-xs font-medium text-center ${index === 0 ? 'text-green-600' : 'text-gray-700'}`}>
-                      {role}
+                <div className="bg-white p-6 rounded-lg shadow">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Job Match Level</p>
+                      <p className="text-2xl font-semibold text-gray-900">Entry Level</p>
                     </div>
-                    {index === 0 && (
-                      <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
-                        Current
-                      </div>
-                    )}
+                    <div className="p-3 bg-blue-100 rounded-full">
+                      <Users className="h-6 w-6 text-blue-600" />
+                    </div>
                   </div>
-                ))}
+                  <div className="mt-4">
+                    <div className="flex items-center">
+                      <span className="text-sm text-blue-600">{resumeData.jobLevelScore[1].score}%</span>
+                      <span className="ml-2 text-sm text-gray-500">match score</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white p-6 rounded-lg shadow">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Best Matching Role</p>
+                      <p className="text-2xl font-semibold text-gray-900">{resumeData.matchingJobRoles[0]}</p>
+                    </div>
+                    <div className="p-3 bg-green-100 rounded-full">
+                      <TrendingUp className="h-6 w-6 text-green-600" />
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <div className="flex items-center">
+                      <span className="text-sm text-green-600">High compatibility</span>
+                      <span className="ml-2 text-sm text-gray-500">for current skills</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
 
-            <div className="mt-12">
-              <h3 className="text-md font-medium text-gray-900 mb-3">Growth Recommendations</h3>
-              <ul className="space-y-2 list-disc pl-5">
-                {resumeData.careerGrowthTrajectory[0].suggestions.map((suggestion, index) => (
-                  <li key={index} className="text-gray-700 text-sm">{suggestion}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="bg-white p-6 rounded-lg shadow">
+                  <h2 className="text-lg font-semibold text-gray-900 mb-4">Top Skills Score</h2>
+                  <div className="space-y-4">
+                    {resumeData.relevantSkillsScore.map((item) => (
+                      <div key={item.skill} className="flex items-center">
+                        <div className="w-32 text-sm text-gray-500">{item.skill}</div>
+                        <div className="flex-1">
+                          <div className="h-4 bg-gray-100 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-green-600"
+                              style={{ width: `${item.score}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                        <div className="w-16 text-right text-sm text-gray-500">
+                          {item.score}%
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
 
-          {/* New section for Recommended Skills */}
-          <div className="bg-white p-6 rounded-lg shadow">
-            <div className="flex items-center mb-4">
-              <Lightbulb className="h-5 w-5 text-amber-500 mr-2" />
-              <h2 className="text-lg font-semibold text-gray-900">Recommended Skills</h2>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {resumeData.skills.recommendedSkills.map((skill) => (
-                <span 
-                  key={skill} 
-                  className="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-sm"
-                >
-                  {skill}
-                </span>
-              ))}
-            </div>
-          </div>
-          
-          {/* Course Recommendations */}
-          <div className="bg-white p-6 rounded-lg shadow">
-            <div className="flex items-center mb-4">
-              <BookOpen className="h-5 w-5 text-indigo-500 mr-2" />
-              <h2 className="text-lg font-semibold text-gray-900">Course Recommendations</h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {resumeData.courseRecommendations.map((course, index) => (
-                <div key={index} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
-                  <div className="flex items-center mb-2">
-                    <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-indigo-100 text-indigo-800 text-xs font-medium mr-2">
-                      {course.platform[0]}
+                <div className="bg-white p-6 rounded-lg shadow">
+                  <h2 className="text-lg font-semibold text-gray-900 mb-4">Job Level Compatibility</h2>
+                  <div className="space-y-4">
+                    {resumeData.jobLevelScore.map((item) => (
+                      <div key={item.level} className="flex items-center">
+                        <div className="w-32 text-sm text-gray-500">{item.level}</div>
+                        <div className="flex-1">
+                          <div className="h-4 bg-gray-100 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-indigo-600"
+                              style={{ width: `${item.score}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                        <div className="w-16 text-right text-sm text-gray-500">
+                          {item.score}%
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white p-6 rounded-lg shadow">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">ATS Keywords</h2>
+                <div className="flex flex-wrap gap-2">
+                  {resumeData.atsKeywords.map((keyword) => (
+                    <span 
+                      key={keyword} 
+                      className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                    >
+                      {keyword}
                     </span>
-                    <span className="text-sm text-gray-500">{course.platform}</span>
-                  </div>
-                  <h3 className="font-medium text-gray-900">{course.course_name}</h3>
-                  <a 
-                    href={course.link} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="mt-2 text-sm text-indigo-600 hover:text-indigo-800 flex items-center"
-                  >
-                    View course
-                    <svg className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
-                  </a>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Appreciation */}
-          <div className="bg-white p-6 rounded-lg shadow">
-            <div className="flex items-center mb-4">
-              <Award className="h-5 w-5 text-green-500 mr-2" />
-              <h2 className="text-lg font-semibold text-gray-900">Strengths & Appreciation</h2>
-            </div>
-            <div className="space-y-3">
-              {resumeData.appreciation.map((item, index) => (
-                <div key={index} className="flex items-start">
-                  <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mr-3">
-                    <span className="text-green-600 text-xs">✓</span>
-                  </div>
-                  <p className="text-gray-700">{item}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Resume Tips */}
-          <div className="bg-white p-6 rounded-lg shadow">
-            <div className="flex items-center mb-4">
-              <FileText className="h-5 w-5 text-blue-500 mr-2" />
-              <h2 className="text-lg font-semibold text-gray-900">Resume Improvement Tips</h2>
-            </div>
-            <div className="space-y-3">
-              {resumeData.resumeTips.map((tip, index) => (
-                <div key={index} className="flex items-start">
-                  <div className="flex-shrink-0 h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-                    <span className="text-blue-600 text-xs">{index + 1}</span>
-                  </div>
-                  <p className="text-gray-700">{tip}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Project Suggestions */}
-          <div className="bg-white p-6 rounded-lg shadow">
-            <div className="flex items-center mb-4">
-              <Code className="h-5 w-5 text-purple-500 mr-2" />
-              <h2 className="text-lg font-semibold text-gray-900">Project Suggestions</h2>
-            </div>
-            
-            <div className="mb-6">
-              <h3 className="text-md font-medium text-gray-900 mb-3">Improvement Tips for Existing Projects</h3>
-              <ul className="space-y-2 list-disc pl-5">
-                {resumeData.projectSuggestions.improvementTips.map((tip, index) => (
-                  <li key={index} className="text-gray-700">{tip}</li>
-                ))}
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="text-md font-medium text-gray-900 mb-3">Recommended New Projects</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {resumeData.projectSuggestions.newProjectRecommendations.map((project, index) => (
-                  <div key={index} className="border border-gray-200 rounded-lg p-4 bg-purple-50">
-                    <div className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-purple-100 mb-3">
-                      <span className="text-purple-600 text-sm font-bold">{index + 1}</span>
-                    </div>
-                    <p className="text-gray-800">{project}</p>
-                  </div>
-                ))}
               </div>
-            </div>
-          </div>
+
+              <div className="bg-white p-6 rounded-lg shadow">
+                <h2 className="text-lg font-semibold text-gray-900 mb-6">Career Growth Trajectory</h2>
+                
+                <div className="relative">
+                  {/* Timeline bar */}
+                  <div className="absolute left-0 top-6 w-full h-1 bg-gray-200"></div>
+                  
+                  {/* Timeline nodes */}
+                  <div className="flex justify-between relative">
+                    {[resumeData.careerGrowthTrajectory[0].currentRole, 
+                      resumeData.careerGrowthTrajectory[0].nextRole, 
+                      ...resumeData.careerGrowthTrajectory[0].futureRoles].map((role, index) => (
+                      <div key={index} className="flex flex-col items-center relative" style={{width: `${100/(6+1)}%`}}>
+                        <div className={`w-4 h-4 rounded-full z-10 ${index === 0 ? 'bg-green-500' : 'bg-blue-500'}`}></div>
+                        <div className={`mt-4 text-xs font-medium text-center ${index === 0 ? 'text-green-600' : 'text-gray-700'}`}>
+                          {role}
+                        </div>
+                        {index === 0 && (
+                          <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+                            Current
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-12">
+                  <h3 className="text-md font-medium text-gray-900 mb-3">Growth Recommendations</h3>
+                  <ul className="space-y-2 list-disc pl-5">
+                    {resumeData.careerGrowthTrajectory[0].suggestions.map((suggestion, index) => (
+                      <li key={index} className="text-gray-700 text-sm">{suggestion}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              {/* New section for Recommended Skills */}
+              <div className="bg-white p-6 rounded-lg shadow">
+                <div className="flex items-center mb-4">
+                  <Lightbulb className="h-5 w-5 text-amber-500 mr-2" />
+                  <h2 className="text-lg font-semibold text-gray-900">Recommended Skills</h2>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {resumeData.skills.recommendedSkills.map((skill) => (
+                    <span 
+                      key={skill} 
+                      className="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-sm"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Course Recommendations */}
+              <div className="bg-white p-6 rounded-lg shadow">
+                <div className="flex items-center mb-4">
+                  <BookOpen className="h-5 w-5 text-indigo-500 mr-2" />
+                  <h2 className="text-lg font-semibold text-gray-900">Course Recommendations</h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {resumeData.courseRecommendations.map((course, index) => (
+                    <div key={index} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                      <div className="flex items-center mb-2">
+                        <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-indigo-100 text-indigo-800 text-xs font-medium mr-2">
+                          {course.platform[0]}
+                        </span>
+                        <span className="text-sm text-gray-500">{course.platform}</span>
+                      </div>
+                      <h3 className="font-medium text-gray-900">{course.course_name}</h3>
+                      <a 
+                        href={course.link} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="mt-2 text-sm text-indigo-600 hover:text-indigo-800 flex items-center"
+                      >
+                        View course
+                        <svg className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Appreciation */}
+              <div className="bg-white p-6 rounded-lg shadow">
+                <div className="flex items-center mb-4">
+                  <Award className="h-5 w-5 text-green-500 mr-2" />
+                  <h2 className="text-lg font-semibold text-gray-900">Strengths & Appreciation</h2>
+                </div>
+                <div className="space-y-3">
+                  {resumeData.appreciation.map((item, index) => (
+                    <div key={index} className="flex items-start">
+                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mr-3">
+                        <span className="text-green-600 text-xs">✓</span>
+                      </div>
+                      <p className="text-gray-700">{item}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Resume Tips */}
+              <div className="bg-white p-6 rounded-lg shadow">
+                <div className="flex items-center mb-4">
+                  <FileText className="h-5 w-5 text-blue-500 mr-2" />
+                  <h2 className="text-lg font-semibold text-gray-900">Resume Improvement Tips</h2>
+                </div>
+                <div className="space-y-3">
+                  {resumeData.resumeTips.map((tip, index) => (
+                    <div key={index} className="flex items-start">
+                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                        <span className="text-blue-600 text-xs">{index + 1}</span>
+                      </div>
+                      <p className="text-gray-700">{tip}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Project Suggestions */}
+              <div className="bg-white p-6 rounded-lg shadow">
+                <div className="flex items-center mb-4">
+                  <Code className="h-5 w-5 text-purple-500 mr-2" />
+                  <h2 className="text-lg font-semibold text-gray-900">Project Suggestions</h2>
+                </div>
+                
+                <div className="mb-6">
+                  <h3 className="text-md font-medium text-gray-900 mb-3">Improvement Tips for Existing Projects</h3>
+                  <ul className="space-y-2 list-disc pl-5">
+                    {resumeData.projectSuggestions.improvementTips.map((tip, index) => (
+                      <li key={index} className="text-gray-700">{tip}</li>
+                    ))}
+                  </ul>
+                </div>
+                
+                <div>
+                  <h3 className="text-md font-medium text-gray-900 mb-3">Recommended New Projects</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {resumeData.projectSuggestions.newProjectRecommendations.map((project, index) => (
+                      <div key={index} className="border border-gray-200 rounded-lg p-4 bg-purple-50">
+                        <div className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-purple-100 mb-3">
+                          <span className="text-purple-600 text-sm font-bold">{index + 1}</span>
+                        </div>
+                        <p className="text-gray-800">{project}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       )}
     </div>

@@ -54,6 +54,7 @@ export interface ResumeData {
   education: Education[];
   experience: Experience[];
   skills: Skill[];
+  atsScore?: number;
   certifications?: Array<{
     name: string;
     issuer: string;

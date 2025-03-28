@@ -114,6 +114,7 @@ export class ResumeController {
         experience: resumeData.experience || [],
         education: resumeData.education || [],
         skills: resumeData.skills || [],
+        atsScore: resumeData.atsScore || 69,
         parsedData: resumeData.parsedData || {
           rawText: "",
           keywords: {},
@@ -262,6 +263,30 @@ export class ResumeController {
         originalName: req.file.originalname,
       });
 
+      let savedResume = null;
+      const rs = await Resume.findOne({});
+      const newResume = new Resume({
+        ...rs.toObject(),
+        _id: undefined,
+        id: undefined,
+      });
+      console.log(Object.keys(newResume));
+      console.log(Object.keys(newResume.parsedData ?? { NUlll: "" }));
+
+      savedResume = await newResume.save();
+      logger.info("Resume saved to database", { resumeId: savedResume.id });
+
+      // Send response
+      return res.json({
+        success: true,
+        resumeId: savedResume?.id,
+        atsScore: 0,
+        keywords: [],
+        skills: [],
+        saved: !!savedResume,
+        resumeUrl: savedResume ? `/resumes/${savedResume.id}` : undefined,
+      });
+
       // Parse the resume with OpenAI
       const parseResult = await this.resumeParser.parseResume(
         req.file.buffer,
@@ -277,7 +302,6 @@ export class ResumeController {
       console.log(Object.keys(resumeData.parsedData!));
 
       // Only save if user is authenticated
-      let savedResume = null;
       console.log(`SHOULD ${req.user?.id}`);
 
       if (req.user?.id) {

@@ -99,43 +99,48 @@ const Resumes = () => {
     try {
       // Validate file
       if (!file) {
-        throw new Error('Please select a file');
+        throw new Error("Please select a file");
       }
 
       // Validate file size
       const maxSize = 10 * 1024 * 1024; // 10MB
       if (file.size > maxSize) {
-        throw new Error('File size exceeds 10MB limit');
+        throw new Error("File size exceeds 10MB limit");
       }
 
       // Validate file type
       const allowedTypes = [
-        'application/pdf',
-        'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       ];
-      const fileExtension = file.name.toLowerCase().split('.').pop();
-      const isValidType = allowedTypes.includes(file.type) || 
-                         ['pdf', 'doc', 'docx'].includes(fileExtension || '');
-      
+      const fileExtension = file.name.toLowerCase().split(".").pop();
+      const isValidType =
+        allowedTypes.includes(file.type) ||
+        ["pdf", "doc", "docx"].includes(fileExtension || "");
+
       if (!isValidType) {
-        throw new Error('Invalid file type. Please upload a PDF or Word document');
+        throw new Error(
+          "Invalid file type. Please upload a PDF or Word document"
+        );
       }
 
       const formData = new FormData();
-      formData.append('resume', file, file.name); // Include filename
-      formData.append('type', file.type); // Include file type
-      
+      formData.append("resume", file, file.name); // Include filename
+      formData.append("type", file.type); // Include file type
+
       const response = await resumeService.parseResume(formData);
-      
+
       if (!response || !response.atsScore) {
-        throw new Error('Invalid response from server');
+        throw new Error("Invalid response from server");
       }
-      
+      console.log("QQQQQQQQQQQ:", response);
       await handleUploadSuccess(response);
     } catch (err: any) {
-      console.error('Upload error:', err);
-      setUploadError(err.message || 'Failed to upload resume. Please try again.');
+      console.error("Upload error:", err);
+      setUploadError(
+        err.message || "Failed to upload resume. Please try again."
+      );
     } finally {
       setIsUploading(false);
     }
@@ -154,35 +159,37 @@ const Resumes = () => {
   }) => {
     try {
       if (!isAuthenticated) {
-        throw new Error('Please log in to save your resume');
+        throw new Error("Please log in to save your resume");
       }
 
       setIsUploading(true);
       setUploadProgress(90);
-      
+
       const resumeData = {
         title: `Resume ${new Date().toLocaleDateString()}`,
-        content: data.skills.join(', ') + '\n\n' + data.keywords.join(', '),
+        content: data.skills.join(", ") + "\n\n" + data.keywords.join(", "),
         atsScore: data.atsScore,
         keywords: data.keywords,
         skills: data.skills,
       };
-      
+
+      console.log("Resume DATAQ:", resumeData);
+      console.log("Resume DATAQ:", data);
       const savedResume = await resumeService.createResume(resumeData);
-      console.log('Resume saved successfully:', savedResume);
-      
+      console.log("Resume saved successfully:", savedResume);
+
       // Update the resume list
       console.log("Resume saved:", savedResume);
-      setResumes(prevResumes => [savedResume, ...prevResumes]);
-      
+      setResumes((prevResumes) => [savedResume, ...prevResumes]);
+
       setUploadProgress(100);
       setUploadSuccess(true);
       setUploadResults({
         atsScore: data.atsScore,
         keywords: data.keywords,
-        skills: data.skills
+        skills: data.skills,
       });
-      
+
       // Close modal after 3 seconds
       setTimeout(() => {
         setShowUploadModal(false);
@@ -194,11 +201,11 @@ const Resumes = () => {
         }, 300);
       }, 3000);
     } catch (err: any) {
-      console.error('Error saving resume:', err);
-      if (err.message.includes('Authentication')) {
-        navigate('/login', { state: { from: '/resumes' } });
+      console.error("Error saving resume:", err);
+      if (err.message.includes("Authentication")) {
+        navigate("/login", { state: { from: "/resumes" } });
       } else {
-        setUploadError(err.message || 'Failed to save resume data');
+        setUploadError(err.message || "Failed to save resume data");
       }
     } finally {
       setIsUploading(false);

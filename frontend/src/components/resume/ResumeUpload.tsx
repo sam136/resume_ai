@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Upload, File, AlertCircle } from 'lucide-react';
 import api from '../../services/api';
+import axios from "axios";
 
 interface UploadResponse {
   atsScore: number;
@@ -14,7 +15,10 @@ interface ResumeUploadProps {
   initialFile?: File;
 }
 
-export const ResumeUpload: React.FC<ResumeUploadProps> = ({ onUploadSuccess, initialFile }) => {
+export const ResumeUpload: React.FC<ResumeUploadProps> = ({
+  onUploadSuccess,
+  initialFile,
+}) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -28,18 +32,19 @@ export const ResumeUpload: React.FC<ResumeUploadProps> = ({ onUploadSuccess, ini
 
   const handleFileUpload = async (file: File) => {
     const allowedTypes = [
-      'application/pdf', 
-      'application/msword', 
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     ];
-    
+
     // Check for PDF by extension if MIME type doesn't work
-    const isPdf = file.name.toLowerCase().endsWith('.pdf');
-    const isDoc = file.name.toLowerCase().endsWith('.doc') || 
-                file.name.toLowerCase().endsWith('.docx');
-                
+    const isPdf = file.name.toLowerCase().endsWith(".pdf");
+    const isDoc =
+      file.name.toLowerCase().endsWith(".doc") ||
+      file.name.toLowerCase().endsWith(".docx");
+
     if (!allowedTypes.includes(file.type) && !isPdf && !isDoc) {
-      setError('Please upload a PDF or Word document');
+      setError("Please upload a PDF or Word document");
       return;
     }
 
@@ -49,23 +54,43 @@ export const ResumeUpload: React.FC<ResumeUploadProps> = ({ onUploadSuccess, ini
     try {
       // Create form data for file upload
       const formData = new FormData();
-      formData.append('resume', file);
-      
-      // Send the file to the backend for parsing
-      const response = await api.post<UploadResponse>('/resumes/parse', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      formData.append("resume", file);
 
-      // Pass the parsed data to the parent component
-      onUploadSuccess(response.data);
+      // Send the file to the backend for parsing
+      const response = await api.post<UploadResponse>(
+        "/resumes/parse",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log(response.data);
+      formData.append("resumeId", response.data.resumeId);
+      const res = await axios.post(
+        "http://localhost:8000/upload-resume",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      console.log("Resume upload !!!:", res.data.data.resume_score);
+      const data = {
+        ...response.data,
+        atsScore: parseInt(res.data.data.resume_score.split("/")[0]),
+      };
+      console.log("Resume upload response:", data);
+      onUploadSuccess(data);
     } catch (err: any) {
-      console.error('Resume upload error:', err);
+      console.error("Resume upload error:", err);
       setError(
-        err.response?.data?.message || 
-        err.message || 
-        'Failed to parse resume. Please try again.'
+        err.response?.data?.message ||
+          err.message ||
+          "Failed to parse resume. Please try again."
       );
     } finally {
       setLoading(false);
@@ -75,7 +100,7 @@ export const ResumeUpload: React.FC<ResumeUploadProps> = ({ onUploadSuccess, ini
   const handleClick = () => {
     const input = fileInputRef.current;
     if (input) {
-      input.value = '';
+      input.value = "";
       input.click();
     }
   };
@@ -86,7 +111,7 @@ export const ResumeUpload: React.FC<ResumeUploadProps> = ({ onUploadSuccess, ini
         ref={fileInputRef}
         type="file"
         accept=".pdf,.doc,.docx"
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
         onChange={(e) => {
           const file = e.target.files?.[0];
           if (file) handleFileUpload(file);
@@ -132,12 +157,10 @@ export const ResumeUpload: React.FC<ResumeUploadProps> = ({ onUploadSuccess, ini
           if (file) handleFileUpload(file);
         }}
         className={`w-full border-2 border-dashed rounded-lg p-8 text-center ${
-          isDragging ? 'border-indigo-500 bg-indigo-50' : 'border-gray-300'
+          isDragging ? "border-indigo-500 bg-indigo-50" : "border-gray-300"
         }`}
       >
-        <p className="text-gray-600">
-          Or drop your file here
-        </p>
+        <p className="text-gray-600">Or drop your file here</p>
       </div>
 
       {error && (

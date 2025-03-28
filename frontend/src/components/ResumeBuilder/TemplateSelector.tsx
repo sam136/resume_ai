@@ -4,7 +4,6 @@ import { Layout } from 'lucide-react';
 interface Template {
   id: string;
   name: string;
-  description: string;
 }
 
 interface TemplateSelectorProps {
@@ -32,7 +31,6 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
         >
           <Layout className="h-8 w-8 mx-auto mb-2 text-indigo-600" />
           <h3 className="text-sm font-medium text-gray-900">{template.name}</h3>
-          <p className="text-xs text-gray-500 mt-1">{template.description}</p>
         </button>
       ))}
     </div>

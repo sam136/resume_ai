@@ -17,8 +17,9 @@ data ='{"basicInfo": {"name": "Samarth Chauhan", "email": "samarthchauhan7@gmail
 
 @resume_bp.route('/resume/<string:id>', methods=['GET'])
 def get_resume(id):
-    d = json.loads(data)
-    return jsonify(d)
+    # d = json.loads(data)
+    # return jsonify(d)
+    print(resumes.keys(),id)
     resume = resumes.get(id)
     if not resume:
         return jsonify({'message': 'Resume not found'}), 404
@@ -59,11 +60,15 @@ def upload_resume():
         # Optionally, save metadata or additional data
         data = request.form.to_dict()
         new_id = max(resumes.keys(), default=0) + 1
-        resumes[new_id] = {'file_path': file_path, **data}
+        # resumes[new_id] = {'file_path': file_path, **data}
         
         res = rh.do(file_path)
+        idN = request.form.get('resumeId',new_id)
+        resumes[idN] = res
+        print(resumes.keys())
 
-        return jsonify({'resumeId': request.form.get('resumeId','-1'), 'filePath': file_path, 'responseDict': data,'data': res})
+
+        return jsonify({'resumeId': idN, 'filePath': file_path, 'responseDict': data,'data': res})
     
     return jsonify({'message': 'Invalid file type. Only PDF files are allowed.'}), 400
 

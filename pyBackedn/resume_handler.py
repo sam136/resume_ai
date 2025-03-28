@@ -86,6 +86,8 @@ Here is the resume text:
 \"\"\"{resume_text}\"\"\"
 """
 
+    with open("prompt", "r") as f:
+        prompt = f.read()
     prompt = prompt.replace('{0}', resume_text).replace('{1}', json.dumps(resume_links))
 
     headers = {
@@ -100,7 +102,7 @@ Here is the resume text:
     if response.status_code == 200:
         try:
             j = response.json()
-            # print(j)
+            print(j['choices'][0].keys())
             raw_response = j["choices"][0]["message"]["content"]
             data = extract_json(raw_response)
             if "error" in data:

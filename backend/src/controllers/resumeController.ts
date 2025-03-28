@@ -264,28 +264,28 @@ export class ResumeController {
       });
 
       let savedResume = null;
-      // const rs = await Resume.findOne({});
-      // const newResume = new Resume({
-      //   ...rs.toObject(),
-      //   _id: undefined,
-      //   id: undefined,
-      // });
-      // console.log(Object.keys(newResume));
-      // console.log(Object.keys(newResume.parsedData ?? { NUlll: "" }));
+      const rs = await Resume.findOne({});
+      const newResume = new Resume({
+        ...rs.toObject(),
+        _id: undefined,
+        id: undefined,
+      });
+      console.log(Object.keys(newResume));
+      console.log(Object.keys(newResume.parsedData ?? { NUlll: "" }));
 
-      // savedResume = await newResume.save();
-      // logger.info("Resume saved to database", { resumeId: savedResume.id });
+      savedResume = await newResume.save();
+      logger.info("Resume saved to database", { resumeId: savedResume.id });
 
-      // // Send response
-      // return res.json({
-      //   success: true,
-      //   resumeId: savedResume?.id,
-      //   atsScore: 0,
-      //   keywords: [],
-      //   skills: [],
-      //   saved: !!savedResume,
-      //   resumeUrl: savedResume ? `/resumes/${savedResume.id}` : undefined,
-      // });
+      // Send response
+      return res.json({
+        success: true,
+        resumeId: savedResume?.id,
+        atsScore: 0,
+        keywords: [],
+        skills: [],
+        saved: !!savedResume,
+        resumeUrl: savedResume ? `/resumes/${savedResume.id}` : undefined,
+      });
 
       // Parse the resume with OpenAI
       const parseResult = await this.resumeParser.parseResume(

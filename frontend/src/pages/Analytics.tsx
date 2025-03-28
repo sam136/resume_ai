@@ -57,7 +57,8 @@ const Analytics = () => {
         throw new Error('Failed to fetch resume data');
       }
       const data = await response.json();
-      setResumeData(data); // Update resumeData with API response
+      setResumeData(data.responseDict); // Update resumeData with API response
+      console.log("DATA: ", data.responseDict);
     } catch (error) {
       console.error('Error fetching resume data:', error);
       showToast({ message: 'Failed to load resume data', type: 'error' });

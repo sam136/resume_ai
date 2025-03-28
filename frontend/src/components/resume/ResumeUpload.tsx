@@ -81,7 +81,7 @@ export const ResumeUpload: React.FC<ResumeUploadProps> = ({
       console.log("Resume upload !!!:", res.data.data.resume_score);
       const data = {
         ...response.data,
-        atsScore: parseInt(res.data.data.resume_score.split("/")[0]),
+        atsScore: parseInt(res.data.data.atsScore.split("/")[0]),
       };
       console.log("Resume upload response:", data);
       onUploadSuccess(data);

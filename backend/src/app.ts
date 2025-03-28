@@ -1,24 +1,18 @@
 import express from 'express';
-import { json } from 'body-parser';
-import { connect } from './utils/database';
-import authRoutes from './routes/auth';
-import resumeRoutes from './routes/resume';
-import userRoutes from './routes/user';
-import { errorHandler } from './middleware/errorHandler';
-import { authenticate } from './middleware/auth';
-import config from './config';
+import { json } from "body-parser";
+import resumeRoutes from "./routes/resume";
+import userRoutes from "./routes/user";
+import { errorHandler } from "./middleware/errorHandler";
+import { authenticate } from "./middleware/auth";
+import config from "./config";
 
 const app = express();
-
-// Connect to the database
-connect();
 
 // Middleware
 app.use(json());
 app.use(authenticate);
 
 // Routes
-app.use('/api/auth', authRoutes);
 app.use('/api/resumes', resumeRoutes);
 app.use('/api/users', userRoutes);
 

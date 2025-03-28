@@ -21,11 +21,11 @@ declare global {
 export const protect = async (req: Request, res: Response, next: NextFunction) => {
   try {
     let token;
-    // console.log('Auth middleware - Full Headers:', {
+    // console.log("Auth middleware - Full Headers:", {
     //   headers: req.headers,
     //   path: req.path,
     //   method: req.method,
-    //   authorization: req.headers.authorization
+    //   authorization: req.headers.authorization,
     // });
 
     if (req.headers.authorization?.startsWith("Bearer ")) {

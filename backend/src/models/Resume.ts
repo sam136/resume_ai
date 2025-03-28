@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import { ParsedResume } from "../types";
 
 const PersonalInfoSchema = new Schema({
   firstName: { type: String, required: true },
@@ -47,44 +48,47 @@ const ProjectSchema = new Schema({
 const SkillSchema = new Schema({
   id: { type: String, required: true },
   name: { type: String, required: true },
-  level: { 
-    type: String, 
-    enum: ['beginner', 'intermediate', 'advanced', 'expert'],
-    default: 'intermediate'
+  level: {
+    type: String,
+    enum: ["beginner", "intermediate", "advanced", "expert"],
+    default: "intermediate",
   },
-  keywords: [String]
+  keywords: [String],
 });
 
-const ResumeSchema = new Schema({
-  userId: { 
-    type: Schema.Types.ObjectId, 
-    ref: 'User', 
-    required: true,
-    default: '000000000000000000000000' // Default ObjectId for anonymous users
+const ResumeSchema = new Schema(
+  {
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      default: "000000000000000000000000", // Default ObjectId for anonymous users
+    },
+    title: { type: String, required: true },
+    personalInfo: { type: PersonalInfoSchema, required: true },
+    experience: [ExperienceSchema],
+    education: [EducationSchema],
+    skills: [SkillSchema],
+    projects: [ProjectSchema],
+    version: { type: Number, default: 1 },
+    atsScore: { type: Number, default: 0 },
+    atsStatus: {
+      type: String,
+      enum: ["draft", "submitted", "reviewing", "accepted", "rejected"],
+      default: "draft",
+    },
+    atsKeywords: [String],
+    atsFeedback: String,
   },
-  title: { type: String, required: true },
-  personalInfo: { type: PersonalInfoSchema, required: true },
-  experience: [ExperienceSchema],
-  education: [EducationSchema],
-  skills: [SkillSchema],
-  projects: [ProjectSchema],
-  version: { type: Number, default: 1 },
-  atsScore: { type: Number, default: 0 },
-  atsStatus: { 
-    type: String, 
-    enum: ['draft', 'submitted', 'reviewing', 'accepted', 'rejected'],
-    default: 'draft'
-  },
-  atsKeywords: [String],
-  atsFeedback: String
-}, {
-  timestamps: true,
-  toJSON: { virtuals: true },
-  toObject: { virtuals: true }
-});
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
+);
 
 // Auto-increment version on update
-ResumeSchema.pre('save', function(next) {
+ResumeSchema.pre("save", function (next) {
   if (this.isModified() && !this.isNew) {
     this.version += 1;
     this.updatedAt = new Date();
@@ -93,7 +97,7 @@ ResumeSchema.pre('save', function(next) {
 });
 
 export type ResumeDocument = Document & ResumeData;
-export const Resume = mongoose.model<ResumeDocument>('Resume', ResumeSchema);
+export const Resume = mongoose.model<ResumeDocument>("Resume", ResumeSchema);
 
 export interface ResumeData {
   userId: mongoose.Types.ObjectId;
@@ -133,7 +137,7 @@ export interface ResumeData {
   skills: {
     id: string;
     name: string;
-    level: 'beginner' | 'intermediate' | 'advanced' | 'expert';
+    level: "beginner" | "intermediate" | "advanced" | "expert";
     keywords: string[];
   }[];
   projects: {
@@ -146,9 +150,11 @@ export interface ResumeData {
   }[];
   version: number;
   atsScore: number;
-  atsStatus: 'draft' | 'submitted' | 'reviewing' | 'accepted' | 'rejected';
+  atsStatus: "draft" | "submitted" | "reviewing" | "accepted" | "rejected";
   atsKeywords: string[];
   atsFeedback?: string;
   createdAt: Date;
   updatedAt: Date;
+
+  parsedData: object;
 }

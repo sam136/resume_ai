@@ -1,11 +1,12 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { FileText, Zap } from 'lucide-react';
+import { FileText, Zap, Upload, X, Check, Plus } from 'lucide-react';
 import type { RootState } from '../store';
 import { LoadingState, initialLoadingState } from '../types/loading';
 import jobService from '../services/jobService';
-import { getUserResumes, Resume } from '../services/resumeService';
+import resumeService, { getUserResumes, Resume } from '../services/resumeService';
+import { ResumeUpload } from '../components/resume/ResumeUpload';
 
 interface DashboardMetrics {
   activeResumes: number;
@@ -35,10 +36,23 @@ interface Job {
 }
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [{ isLoading, error }, setLoadingState] = useState<LoadingState>(initialLoadingState);
   const [userResumes, setUserResumes] = useState<Resume[]>([]);
   const user = useSelector((state: RootState) => state.auth.user);
   const [savedJobs, setSavedJobs] = useState<Job[]>([]);
+  
+  // Resume upload state
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [uploadResults, setUploadResults] = useState<{
+    atsScore?: number;
+    keywords?: string[];
+    skills?: string[];
+  } | null>(null);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -46,35 +60,7 @@ const Dashboard = () => {
       try {
         // Fetch resumes
         const resumesResponse = await getUserResumes();
-        // setUserResumes([
-        //   {
-        //     createdAt: new Date().toISOString(),
-        //     updatedAt: new Date().toISOString(),
-        //     id: '1',
-        //     title: 'Sample Resume',
-        //     content: 'This is a sample resume content.',
-        //     atsScore: 80,
-        //   },
-        //   {
-        //     createdAt: new Date().toISOString(),
-        //     updatedAt: new Date().toISOString(),
-        //     id: '1',
-        //     title: 'Sample Resume',
-        //     content: 'This is a sample resume content.',
-        //     atsScore: 85,
-        //   },
-        //   {
-        //     createdAt: new Date().toISOString(),
-        //     updatedAt: new Date().toISOString(),
-        //     id: '1',
-        //     title: 'Sample Resume',
-        //     content: 'This is a sample resume content.',
-        //     atsScore: 85,
-        //   },
-        // ]);
-
-        setUserResumes(resumesResponse)
-        console.log('Fetched resumes:', [1,2,3]);
+        setUserResumes(resumesResponse);
 
         // Fetch saved jobs
         try {
@@ -99,13 +85,8 @@ const Dashboard = () => {
   }, []);
 
   const metrics: DashboardMetrics = useMemo(() => {
-    console.log('Calculating metrics with resumes:', userResumes);
-
-    // Get the latest resume by comparing createdAt timestamps
     const latestResume = userResumes
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
-    
-    console.log('Latest resume:', latestResume);
 
     return {
       activeResumes: userResumes.length,
@@ -127,15 +108,11 @@ const Dashboard = () => {
 
   const optimizationTips = useMemo(() => {
     const tips: OptimizationTip[] = [];
-    
-    // Get the latest resume first
     const latestResume = userResumes
       .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())[0];
 
     if (latestResume && latestResume.atsFeedback) {
-      // Split feedback into separate tips
       const feedbackLines = latestResume.atsFeedback.split('\n').filter(line => line.trim());
-      
       feedbackLines.forEach((line, index) => {
         tips.push({
           id: `${latestResume.id}-${index}`,
@@ -149,6 +126,62 @@ const Dashboard = () => {
 
     return tips.slice(0, 3);
   }, [userResumes]);
+
+  const handleUpload = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    setShowUploadModal(true);
+    setUploadError(null);
+    setUploadSuccess(false);
+    setUploadProgress(0);
+    setUploadResults(null);
+  };
+
+  const closeUploadModal = () => {
+    setShowUploadModal(false);
+  };
+
+  const handleUploadSuccess = async (data: {
+    atsScore: number;
+    keywords: string[];
+    skills: string[];
+    matchingJobs: any[];
+  }) => {
+    try {
+      setIsUploading(true);
+      setUploadProgress(90);
+      
+      const resumeData = {
+        title: `Resume ${new Date().toLocaleDateString()}`,
+        content: data.skills.join(', ') + '\n\n' + data.keywords.join(', '),
+        atsScore: data.atsScore,
+        keywords: data.keywords,
+        skills: data.skills,
+      };
+      
+      await resumeService.createResume(resumeData);
+      
+      setUploadProgress(100);
+      setUploadSuccess(true);
+      setUploadResults({
+        atsScore: data.atsScore,
+        keywords: data.keywords,
+        skills: data.skills
+      });
+      
+      setTimeout(() => {
+        navigate('/resumes');
+      }, 1500);
+      
+    } catch (err: any) {
+      console.error('Error saving resume:', err);
+      setUploadError(err.message || 'Failed to save resume data');
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   if (isLoading) {
     return <div className="flex justify-center items-center h-96">Loading...</div>;
@@ -166,18 +199,115 @@ const Dashboard = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
-        <Link to="/resumes/new" className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
-          Create New Resume
-        </Link>
+        <div className="flex space-x-2">
+          <button 
+            onClick={handleUpload}
+            className="flex items-center px-4 py-2 border border-indigo-600 text-indigo-600 rounded-md hover:bg-indigo-50"
+          >
+            <Upload className="h-5 w-5 mr-2" />
+            Upload Resume
+          </button>
+          <Link to="/resumes/new" className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 flex items-center">
+            <Plus className="h-5 w-5 mr-2" />
+            Create New Resume
+          </Link>
+        </div>
       </div>
 
-      {/* Welcome Section */}
       <div className="bg-white p-6 rounded-lg shadow">
         <h2 className="text-xl font-semibold mb-2">Welcome back, {user ? `${user.firstName} ${user.lastName}` : 'User'}!</h2>
         <p className="text-gray-600">Track your job application progress, manage your resumes, and find new opportunities.</p>
       </div>
 
-      {/* Metrics Cards */}
+      {showUploadModal && (
+        <div className="fixed inset-0 overflow-y-auto z-50 flex items-center justify-center">
+          <div className="fixed inset-0 bg-black opacity-50" onClick={closeUploadModal}></div>
+          <div className="relative bg-white rounded-lg shadow-xl p-6 w-full max-w-lg mx-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-medium text-gray-900">Upload Resume</h3>
+              <button 
+                type="button"
+                className="text-gray-400 hover:text-gray-500"
+                onClick={closeUploadModal}
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {uploadSuccess && uploadResults ? (
+              <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-md">
+                <div className="flex items-center mb-3">
+                  <Check className="h-5 w-5 text-green-500 mr-2" />
+                  <p className="text-green-700 font-medium">Resume uploaded successfully!</p>
+                </div>
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-sm text-gray-600 mb-1">ATS Score</p>
+                    <div className="flex items-center">
+                      <span className="text-lg font-bold text-gray-900 mr-2">{uploadResults.atsScore}%</span>
+                      <div className="w-full h-2 bg-gray-200 rounded-full">
+                        <div 
+                          className={`h-2 rounded-full ${
+                            (uploadResults.atsScore || 0) > 70 ? 'bg-green-500' : 
+                            (uploadResults.atsScore || 0) > 40 ? 'bg-yellow-500' : 'bg-red-500'
+                          }`}
+                          style={{ width: `${uploadResults.atsScore}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {uploadResults.keywords && uploadResults.keywords.length > 0 && (
+                    <div>
+                      <p className="text-sm text-gray-600 mb-1">Keywords Detected</p>
+                      <div className="flex flex-wrap gap-2">
+                        {uploadResults.keywords.map((keyword, index) => (
+                          <span 
+                            key={index}
+                            className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full"
+                          >
+                            {keyword}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {uploadResults.skills && uploadResults.skills.length > 0 && (
+                    <div>
+                      <p className="text-sm text-gray-600 mb-1">Skills Detected</p>
+                      <div className="flex flex-wrap gap-2">
+                        {uploadResults.skills.map((skill, index) => (
+                          <span 
+                            key={index}
+                            className="bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded-full"
+                          >
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <p className="text-sm text-gray-600 mt-3">Redirecting to Resumes page...</p>
+              </div>
+            ) : (
+              <ResumeUpload onUploadSuccess={handleUploadSuccess} />
+            )}
+
+            <div className="flex justify-end space-x-3 mt-4">
+              <button 
+                type="button"
+                onClick={closeUploadModal}
+                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+              >
+                {uploadSuccess ? 'Close' : 'Cancel'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white p-6 rounded-lg shadow">
           <div className="flex items-center">
@@ -203,7 +333,6 @@ const Dashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Activity */}
         <div className="bg-white p-6 rounded-lg shadow">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-semibold text-gray-900">Recent Activity</h2>
@@ -228,7 +357,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Optimization Tips */}
         <div className="bg-white p-6 rounded-lg shadow">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Optimization Tips</h2>
           <div className="space-y-4">
@@ -251,7 +379,6 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Saved Jobs */}
       <div className="bg-white p-6 rounded-lg shadow">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold text-gray-900">Saved Jobs</h2>

@@ -2,9 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FileText, LogOut } from 'lucide-react';
 
-const Navbar = () => {
+interface NavbarProps {
+  className?: string;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
   return (
-    <nav className="bg-white border-b border-gray-200">
+    <nav className={`bg-white border-b border-gray-200 h-16 ${className}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">

@@ -18,9 +18,13 @@ const navigation = [
   { name: 'Settings', icon: Settings, href: '/settings' },
 ];
 
-const Sidebar = () => {
+interface SidebarProps {
+  className?: string;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => {
   return (
-    <div className="w-64 bg-white border-r border-gray-200 min-h-screen">
+    <div className={`w-64 bg-white border-r border-gray-200 overflow-y-auto ${className}`}>
       <div className="h-full px-3 py-4">
         <nav className="space-y-1">
           {navigation.map((item) => (

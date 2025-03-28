@@ -23,10 +23,10 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {isAuthenticated && <Navbar />}
+      {isAuthenticated && <Navbar className="fixed top-0 left-0 right-0 z-10" />}
       <div className="flex">
-        {isAuthenticated && <Sidebar />}
-        <main className={`flex-1 ${isAuthenticated ? 'p-6' : ''}`}>
+        {isAuthenticated && <Sidebar className="fixed left-0 top-16 h-[calc(100vh-4rem)] z-10" />}
+        <main className={`flex-1 ${isAuthenticated ? 'ml-64 pt-24 px-6 pb-6' : ''}`}>
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />

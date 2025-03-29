@@ -1,59 +1,47 @@
 {
-    "1": {
+    "67e77a5478102102e1917695": {
         "basicInfo": {
-            "name": "Samarth Chauhan",
-            "email": "samarthchauhan7@gmail.com",
-            "mobile": "+91 9426824765",
-            "address": "Gujarat, India"
+            "name": "Vyom Pandya",
+            "email": "vyom1184@gmail.com",
+            "mobile": "9408271830",
+            "address": "Not provided in resume"
         },
         "atsScore": "78/100",
-        "aiResumeSummary": "Samarth Chauhan is a Software Engineer with experience as a Flutter Developer Intern. He possesses a strong foundation in multiple programming languages, frameworks, and developer tools. His projects demonstrate his ability to develop end-to-end applications and contribute to open-source projects. He has good experience in state management, API integration, third-party libraries. The resume highlights his skills in Flutter, Python, Golang, and relevant technologies like Docker, Firebase, and MongoDB.",
+        "aiResumeSummary": "A dynamic digital marketing professional with experience in content creation, video editing, graphic design, and project management. Possesses a strong foundation in software development, web design, and data analysis, supplemented by relevant technical certifications. Actively involved in community engagement and leadership roles.",
         "relevantSkillsScore": [
             {
-                "skill": "Flutter",
+                "skill": "Content Creation",
                 "score": 85
             },
             {
-                "skill": "Python",
-                "score": 80
-            },
-            {
-                "skill": "Golang",
+                "skill": "Project Management",
                 "score": 75
             },
             {
-                "skill": "Dart",
-                "score": 70
-            },
-            {
-                "skill": "Firebase",
-                "score": 75
-            },
-            {
-                "skill": "MongoDB",
-                "score": 70
-            },
-            {
-                "skill": "Git",
+                "skill": "Graphic Design",
                 "score": 80
             },
             {
-                "skill": "Docker",
+                "skill": "Video Editing",
+                "score": 70
+            },
+            {
+                "skill": "Web Design",
                 "score": 65
             },
             {
-                "skill": "API Integration",
-                "score": 80
+                "skill": "Data Analysis",
+                "score": 60
+            },
+            {
+                "skill": "Software Development",
+                "score": 60
             }
         ],
         "jobLevelScore": [
             {
                 "level": "Entry Level",
-                "score": 90
-            },
-            {
-                "level": "Intern",
-                "score": 95
+                "score": 80
             },
             {
                 "level": "Mid Level",
@@ -62,341 +50,107 @@
         ],
         "careerGrowthTrajectory": [
             {
-                "currentRole": "Flutter Developer Intern",
-                "nextRole": "Junior Mobile App Developer",
+                "currentRole": "Digital Marketing",
+                "nextRole": "Digital Marketing Specialist",
                 "futureRoles": [
-                    "Mobile App Developer",
-                    "Senior Mobile App Developer",
-                    "Mobile Development Team Lead",
-                    "Software Architect"
+                    "Digital Marketing Manager",
+                    "Marketing Strategist",
+                    "Content Marketing Director"
                 ],
                 "suggestions": [
-                    "Focus on building more complex mobile applications.",
-                    "Contribute to open-source Flutter projects to enhance your profile.",
-                    "Learn about architectural patterns in mobile development.",
-                    "Consider specializing in a specific area of mobile development (e.g., UI/UX, performance optimization)."
+                    "Develop a portfolio showcasing successful marketing campaigns.",
+                    "Obtain certifications in specific digital marketing tools and platforms (e.g., Google Ads, HubSpot).",
+                    "Network with other marketing professionals and attend industry events."
                 ]
             }
         ],
         "matchingJobRoles": [
-            "Junior Mobile App Developer",
-            "Flutter Developer",
-            "Mobile App Developer Intern",
-            "Software Engineer (Mobile)",
-            "Android Developer (Entry-Level)"
-        ],
-        "atsKeywords": [
-            "Flutter",
-            "Python",
-            "Golang",
-            "Dart",
-            "Firebase",
-            "MongoDB",
-            "Git",
-            "Docker",
-            "API Integration",
-            "REST API",
-            "GraphQL",
-            "FastAPI",
-            "Bloc",
-            "TFLite",
-            "NodeJS",
-            "Linux",
-            "SQLite",
-            "MySQL"
-        ],
-        "skills": {
-            "currentSkills": [
-                "Flutter",
-                "Python",
-                "Golang",
-                "Dart",
-                "C/C++",
-                "Git",
-                "Docker",
-                "Linux",
-                "REST API",
-                "RabbitMQ",
-                "GraphQL",
-                "FastAPI",
-                "FlaskAPI",
-                "TFLite",
-                "Firebase",
-                "NodeJS",
-                "BeautifulSoup",
-                "SQLite",
-                "MySQL",
-                "MongoDB"
-            ],
-            "recommendedSkills": [
-                "Kotlin (for Android development)",
-                "Swift (for iOS development)",
-                "AWS Amplify or Google Cloud Firebase (for backend as a service)",
-                "UI/UX Design Principles",
-                "Testing and Debugging Mobile Applications",
-                "CI/CD for Mobile Apps",
-                "React Native",
-                "gRPC"
-            ]
-        },
-        "courseRecommendations": [
-            {
-                "platform": "Coursera",
-                "course_name": "Flutter Development: Building Cross-Platform Apps",
-                "link": "https://www.coursera.org/specializations/flutter-development"
-            },
-            {
-                "platform": "Udemy",
-                "course_name": "Dart and Flutter: The Complete Developer's Guide",
-                "link": "https://www.udemy.com/course/dart-and-flutter-the-complete-developers-guide/"
-            },
-            {
-                "platform": "edX",
-                "course_name": "Mobile App Development with React Native",
-                "link": "https://www.edx.org/professional-certificate/microsoft-mobile-app-development-with-react-native"
-            },
-            {
-                "platform": "MongoDB University",
-                "course_name": "MongoDB Basics",
-                "link": "https://learn.mongodb.com/courses/mongodb-basics"
-            },
-            {
-                "platform": "AWS",
-                "course_name": "AWS Developer Associate Certification",
-                "link": "https://aws.amazon.com/training/certification/"
-            }
-        ],
-        "appreciation": [
-            "Strong foundation in multiple programming languages.",
-            "Experience with various frameworks and tools.",
-            "Demonstrated ability to develop end-to-end applications.",
-            "Contributions to open-source projects.",
-            "Active participation in tech communities and events."
-        ],
-        "resumeTips": [
-            "Quantify your achievements whenever possible (e.g., 'Improved app performance by X%').",
-            "Tailor your resume to each job application, highlighting the most relevant skills and experience.",
-            "Add a brief summary/objective statement at the top of your resume.",
-            "Include links to your GitHub and LinkedIn profiles for easy access.",
-            "Proofread carefully for any typos or grammatical errors."
-        ],
-        "projectSuggestions": {
-            "improvementTips": [
-                "Add more detailed descriptions of the technologies used in each project.",
-                "Include metrics to demonstrate the impact of your projects (e.g., number of users, performance improvements).",
-                "Deploy your projects to make them accessible to potential employers.",
-                "Write a README file for each project explaining its purpose, how to run it, and how to contribute."
-            ],
-            "newProjectRecommendations": [
-                "Develop a cross-platform mobile app using Flutter or React Native.",
-                "Contribute to an open-source project related to mobile development or backend technologies.",
-                "Build a REST API using FastAPI or FlaskAPI.",
-                "Create a portfolio website showcasing your projects and skills."
-            ]
-        }
-    },
-    "2": {
-        "basicInfo": {
-            "name": "Parshwa Salot",
-            "email": "parshwasalot@gmail.com",
-            "mobile": "+91 93771 36323",
-            "address": "Anand, Gujarat"
-        },
-        "atsScore": "78/100",
-        "aiResumeSummary": "A highly motivated and skilled Information Technology student with experience in web development, marketing, and data science projects. Demonstrated proficiency in MERN stack, Python, and various machine learning libraries. Actively involved in extracurricular activities and possesses strong leadership and communication skills. Eager to apply technical skills and contribute to innovative projects.",
-        "relevantSkillsScore": [
-            {
-                "skill": "Python",
-                "score": 85
-            },
-            {
-                "skill": "React",
-                "score": 75
-            },
-            {
-                "skill": "Machine Learning",
-                "score": 70
-            },
-            {
-                "skill": "Web Development",
-                "score": 80
-            },
-            {
-                "skill": "Marketing",
-                "score": 70
-            }
-        ],
-        "jobLevelScore": [
-            {
-                "level": "Intern",
-                "score": 90
-            },
-            {
-                "level": "Entry Level",
-                "score": 80
-            },
-            {
-                "level": "Mid Level",
-                "score": 50
-            }
-        ],
-        "careerGrowthTrajectory": [
-            {
-                "currentRole": "Chief Marketing Officer",
-                "nextRole": "Data Science Intern",
-                "futureRoles": [
-                    "Junior Data Scientist",
-                    "Data Scientist",
-                    "Senior Data Scientist",
-                    "Data Science Manager"
-                ],
-                "suggestions": [
-                    "Focus on personal projects demonstrating data science skills.",
-                    "Contribute to open-source data science projects.",
-                    "Network with data scientists and attend industry events."
-                ]
-            },
-            {
-                "currentRole": "Web Development Intern",
-                "nextRole": "Junior Web Developer",
-                "futureRoles": [
-                    "Web Developer",
-                    "Senior Web Developer",
-                    "Technical Lead",
-                    "Software Architect"
-                ],
-                "suggestions": [
-                    "Continue building web applications using React and Node.js.",
-                    "Learn about DevOps practices and tools.",
-                    "Explore different web development frameworks and technologies."
-                ]
-            }
-        ],
-        "matchingJobRoles": [
-            "Data Science Intern",
-            "Machine Learning Intern",
-            "Junior Data Scientist",
-            "Web Development Intern",
+            "Digital Marketing Specialist",
+            "Content Marketing Associate",
+            "Social Media Coordinator",
+            "Marketing Assistant",
             "Junior Web Developer",
-            "Marketing Intern",
             "Data Analyst Intern"
         ],
         "atsKeywords": [
-            "Python",
-            "React",
-            "Machine Learning",
-            "Web Development",
-            "Data Science",
+            "Digital Marketing",
+            "Content Creation",
+            "Video Editing",
+            "Graphic Design",
+            "Project Management",
+            "Adobe Photoshop",
+            "Canva",
             "MERN Stack",
-            "Firebase",
-            "SQL",
+            "Web Design",
             "Data Analysis",
-            "Marketing",
-            "Leadership",
-            "Communication",
-            "Project Management"
+            "Technical Writing",
+            "Google Cloud",
+            "Tableau",
+            "Power BI"
         ],
         "skills": {
             "currentSkills": [
-                "C/C++",
-                "Python",
-                "JavaScript",
-                "HTML/CSS",
-                "SQL",
-                "React",
-                "React Native",
-                "Node.js",
-                "Material-UI",
-                "PowerBI",
-                "Tableau",
-                "Git",
-                "MongoDB",
-                "Docker",
-                "Android Studio",
-                "AWS",
-                "Google Cloud",
-                "Firebase",
-                "Pandas",
-                "NumPy",
-                "MatplotLib",
-                "Seaborn",
-                "Pillow",
-                "PyTorch",
-                "OpenCV",
-                "NLTK",
-                "SciPy",
-                "Scikit-learn",
-                "Keras",
-                "Tensorflow",
-                "Marketing",
-                "Problem solving",
-                "Leadership",
-                "Communication",
-                "Presentation",
-                "Planning"
+                "Software Development",
+                "Web Design",
+                "Data Analysis",
+                "Technical Writing",
+                "Project Management",
+                "Content Creation",
+                "Video Editing",
+                "Graphic Design",
+                "Adobe Photoshop",
+                "Canva"
             ],
             "recommendedSkills": [
-                "Cloud Computing (Advanced)",
-                "Deep Learning",
-                "Data Visualization (Advanced)",
-                "Big Data Technologies (Spark, Hadoop)",
-                "Natural Language Processing (NLP)",
-                "DevOps",
-                "Agile Methodologies",
-                "Cybersecurity"
+                "SEO/SEM",
+                "Email Marketing",
+                "Marketing Analytics",
+                "UI/UX Design",
+                "Cloud Computing (AWS, Azure)",
+                "Advanced Data Visualization",
+                "Database Management"
             ]
         },
         "courseRecommendations": [
             {
                 "platform": "Coursera",
-                "course_name": "Deep Learning Specialization",
-                "link": "https://www.coursera.org/specializations/deep-learning"
-            },
-            {
-                "platform": "Udacity",
-                "course_name": "Cloud DevOps Engineer Nanodegree",
-                "link": "https://www.udacity.com/course/cloud-devops-engineer-nanodegree--nd697"
-            },
-            {
-                "platform": "edX",
-                "course_name": "MicroMasters\u00ae Program in Statistics and Data Science",
-                "link": "https://www.edx.org/micromasters/mitx-statistics-and-data-science"
-            },
-            {
-                "platform": "DataCamp",
-                "course_name": "Data Scientist with Python",
-                "link": "https://www.datacamp.com/careers/data-scientist-with-python"
+                "course_name": "Google Digital Marketing & E-commerce Professional Certificate",
+                "link": "https://www.coursera.org/professional-certificates/google-digital-marketing-ecommerce"
             },
             {
                 "platform": "Udemy",
-                "course_name": "The Complete Web Developer in 2024: Zero to Mastery",
-                "link": "https://www.udemy.com/course/the-complete-web-developer-zero-to-mastery/"
+                "course_name": "The Complete Digital Marketing Course - 12 Courses in 1",
+                "link": "https://www.udemy.com/course/complete-digital-marketing-course/"
+            },
+            {
+                "platform": "edX",
+                "course_name": "Marketing Analytics Professional Certificate",
+                "link": "https://www.edx.org/professional-certificate/berkeleyx-marketing-analytics"
             }
         ],
         "appreciation": [
-            "Strong foundation in various technologies.",
-            "Diverse project experience demonstrates versatility.",
-            "Leadership experience in marketing is a valuable asset.",
-            "Proactive involvement in extracurricular activities."
+            "Strong experience in digital marketing, particularly content creation and video editing.",
+            "Demonstrated leadership through AIESEC and student council involvement.",
+            "Proficient in using industry-standard tools like Adobe Photoshop and Canva.",
+            "Good foundation in software development and data analysis, evidenced by certifications."
         ],
         "resumeTips": [
-            "Quantify achievements whenever possible to demonstrate impact (e.g., 'Increased web traffic by 100%').",
-            "Tailor the resume to each specific job application, highlighting the most relevant skills and experience.",
-            "Add specific achievements and results to the descriptions of voluntary experiences.",
-            "Include links to your GitHub, LinkedIn, and Portfolio for easy access.",
-            "Consider adding a 'Skills' section to categorise soft skills to avoid confusion"
+            "Quantify achievements with specific metrics to showcase impact (e.g., increased website traffic by X%).",
+            "Tailor the resume to each specific job application, highlighting the most relevant skills and experiences.",
+            "Add a portfolio link to showcase video editing and graphic design work.",
+            "Consider adding a section for volunteer experience if applicable.",
+            "Proofread carefully for grammar and spelling errors."
         ],
         "projectSuggestions": {
             "improvementTips": [
-                "Add more detail to project descriptions, focusing on the problem solved, the technologies used, and the results achieved.",
-                "Include metrics to quantify the impact of your projects.",
-                "Refactor Uday Easy Bill project description to avoid duplicate bullet points."
+                "Add metrics about the user engagement and impact on NGO partnerships for the Madad project.",
+                "Provide a link to the Madad website (if available) or a GitHub repository showcasing the code.",
+                "Elaborate on the technical challenges faced and solutions implemented during the development of Madad."
             ],
             "newProjectRecommendations": [
-                "Develop a machine learning model for predicting customer churn.",
-                "Create a web application using React and Node.js with user authentication and database integration.",
-                "Build a mobile app using React Native that leverages device features (e.g., camera, location).",
-                "Contribute to an open-source project related to data science or web development."
+                "Create a social media campaign for a local non-profit organization and track its performance.",
+                "Develop a data visualization dashboard to analyze website traffic and user behavior using Tableau or Power BI.",
+                "Build a simple e-commerce website using a MERN stack to gain hands-on experience."
             ]
         }
     }

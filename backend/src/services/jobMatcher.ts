@@ -43,6 +43,13 @@ export class JobMatcherService {
     this.adzunaAppId = process.env.ADZUNA_APP_ID || '';
     this.adzunaApiKey = process.env.ADZUNA_API_KEY || '';
     
+    console.log('JobMatcherService initialized with:');
+    console.log(`- Base URL: ${this.baseUrl}`);
+    console.log(`- App ID exists: ${!!this.adzunaAppId}`);
+    console.log(`- API Key exists: ${!!this.adzunaApiKey}`);
+    console.log(`- App ID length: ${this.adzunaAppId?.length || 0}`);
+    console.log(`- API Key length: ${this.adzunaApiKey?.length || 0}`);
+    
     if (!this.adzunaAppId || !this.adzunaApiKey) {
       throw new Error('Adzuna API credentials are required');
     }
@@ -50,29 +57,44 @@ export class JobMatcherService {
 
   async findMatchingJobs(keywords: Keywords): Promise<Job[]> {
     try {
-      // Ignore keywords and directly call findMatchingJobsOld
-      // return await this.findMatchingJobsOld();
-        const keys = Object.keys(keywords)
-        if(keys.length === 0 ) return [];
-
-        const url = `${this.baseUrl}/in/search/1`;
+        const keys = Object.keys(keywords);
+        console.log(`Finding jobs with ${keys.length} keywords:`, keys);
         
+        if(keys.length === 0 ) {
+          console.log('No keywords provided, returning empty results');
+          return [];
+        }
+
+        const url = `${this.baseUrl}/us/search/1`; // Changed from 'in' to 'us' for testing
+        console.log(`Making API request to: ${url}`);
+        
+        const params = {
+          app_id: this.adzunaAppId,
+          app_key: this.adzunaApiKey,
+          what_or: keys.join(" "),
+          results_per_page: 50
+        };
+        
+        console.log('Request parameters:', JSON.stringify(params, null, 2));
+        
+        console.log('Sending request to Adzuna API...');
         const response = await axios.get<AdzunaResponse>(url, {
-          params: {
-            app_id: this.adzunaAppId,
-            app_key: this.adzunaApiKey,
-            what_or: keys.join(" "),  
-            where: 'India',
-            results_per_page: 50
-          }
+          params
         });
+        
+        console.log('Received response with status:', response.status);
+        console.log('Response headers:', JSON.stringify(response.headers, null, 2));
   
         if (!response.data.results) {
-          console.log('No results found');
+          console.log('No results found in response data');
+          console.log('Response data structure:', JSON.stringify(Object.keys(response.data), null, 2));
           return [];
         }
   
-        console.log(`Found ${response.data.results.length} jobs`); // Add logging
+        console.log(`Found ${response.data.results.length} jobs`);
+        if (response.data.results.length > 0) {
+          console.log('Sample job data:', JSON.stringify(response.data.results[0], null, 2));
+        }
   
         return response.data.results.map((job: AdzunaJobResult): Job => ({
           id: job.id || String(Math.random()),
@@ -84,17 +106,22 @@ export class JobMatcherService {
           salary: {
             min: job.salary_min || 0,
             max: job.salary_max || 0,
-            currency: 'INR'
+            currency: 'INR' // Changed from 'INR' to 'INR' to match US market
           },
           matchScore: 100
         }));
       } catch (error) {
-        console.error('Error fetching jobs from Adzuna:', error);
+        console.error('Error fetching jobs from Adzuna:');
         if (axios.isAxiosError(error)) {
+          console.error('Request URL:', error.config?.url);
+          console.error('Request Params:', error.config?.params);
+          console.error('Response status:', error.response?.status);
           console.error('Response data:', error.response?.data);
+          console.error('Response headers:', error.response?.headers);
+        } else {
+          console.error('Non-Axios error:', error);
         }
         return [];
-    
     }
   }
 
@@ -118,27 +145,37 @@ export class JobMatcherService {
     throw new Error('Not implemented');
   }
 
-  // Remove unused parameters since we're only testing with "tech"
-  async findMatchingJobsOld(): Promise<Job[]> {
+  async findMatchingJobsOld(keywords: string[]): Promise<Job[]> {
     try {
-      const url = `${this.baseUrl}/in/search/1`;
+      const url = `${this.baseUrl}/in/search/1`; // Changed from 'in' to 'us' for testing
+      console.log(`[findMatchingJobsOld] Making API request to: ${url}`);
       
+      const params = {
+        app_id: this.adzunaAppId,
+        app_key: this.adzunaApiKey,
+        what_or: "python golang c++",
+        results_per_page: 50
+      };
+      
+      console.log('[findMatchingJobsOld] Request parameters:', JSON.stringify(params, null, 2));
+      
+      console.log('[findMatchingJobsOld] Sending request to Adzuna API...');
       const response = await axios.get<AdzunaResponse>(url, {
-        params: {
-          app_id: this.adzunaAppId,
-          app_key: this.adzunaApiKey,
-          what_or: "python golang c++",  
-          where: 'India',
-          results_per_page: 50
-        }
+        params
       });
+      
+      console.log('[findMatchingJobsOld] Received response with status:', response.status);
 
       if (!response.data.results) {
-        console.log('No results found');
+        console.log('[findMatchingJobsOld] No results found');
+        console.log('[findMatchingJobsOld] Response data structure:', JSON.stringify(Object.keys(response.data), null, 2));
         return [];
       }
 
-      console.log(`Found ${response.data.results.length} jobs`); // Add logging
+      console.log(`[findMatchingJobsOld] Found ${response.data.results.length} jobs`);
+      if (response.data.results.length > 0) {
+        console.log('[findMatchingJobsOld] Sample job:', JSON.stringify(response.data.results[0], null, 2));
+      }
 
       return response.data.results.map((job: AdzunaJobResult): Job => ({
         id: job.id || String(Math.random()),
@@ -155,9 +192,15 @@ export class JobMatcherService {
         matchScore: 100
       }));
     } catch (error) {
-      console.error('Error fetching jobs from Adzuna:', error);
+      console.error('[findMatchingJobsOld] Error fetching jobs from Adzuna:');
       if (axios.isAxiosError(error)) {
-        console.error('Response data:', error.response?.data);
+        console.error('[findMatchingJobsOld] Request URL:', error.config?.url);
+        console.error('[findMatchingJobsOld] Request Params:', error.config?.params);
+        console.error('[findMatchingJobsOld] Response status:', error.response?.status);
+        console.error('[findMatchingJobsOld] Response data:', error.response?.data);
+        console.error('[findMatchingJobsOld] Response headers:', error.response?.headers);
+      } else {
+        console.error('[findMatchingJobsOld] Non-Axios error:', error);
       }
       return [];
     }
@@ -173,17 +216,52 @@ export class JobMatcherService {
 
   async testAdzunaConnection(): Promise<{ isConnected: boolean; error?: string }> {
     try {
-      const url = `${this.baseUrl}/gb/search/1`;
-      await axios.get(url, {
-        params: {
-          app_id: this.adzunaAppId,
-          app_key: this.adzunaApiKey,
-          what: 'test',
-          results_per_page: 1
-        }
-      });
+      console.log('[testAdzunaConnection] Testing Adzuna API connection...');
+      
+      // Try UK endpoint first (gb)
+      const ukUrl = `${this.baseUrl}/gb/search/1`;
+      console.log(`[testAdzunaConnection] Testing UK endpoint: ${ukUrl}`);
+      
+      const params = {
+        app_id: this.adzunaAppId,
+        app_key: this.adzunaApiKey,
+        what: 'test',
+        results_per_page: 1
+      };
+      
+      console.log('[testAdzunaConnection] Request parameters:', JSON.stringify(params, null, 2));
+      
+      const ukResponse = await axios.get(ukUrl, { params });
+      console.log(`[testAdzunaConnection] UK endpoint successful, status: ${ukResponse.status}`);
+      
+      // Try US endpoint
+      const usUrl = `${this.baseUrl}/us/search/1`;
+      console.log(`[testAdzunaConnection] Testing US endpoint: ${usUrl}`);
+      const usResponse = await axios.get(usUrl, { params });
+      console.log(`[testAdzunaConnection] US endpoint successful, status: ${usResponse.status}`);
+      
+      // Try India endpoint
+      try {
+        const inUrl = `${this.baseUrl}/in/search/1`;
+        console.log(`[testAdzunaConnection] Testing India endpoint: ${inUrl}`);
+        const inResponse = await axios.get(inUrl, { params });
+        console.log(`[testAdzunaConnection] India endpoint successful, status: ${inResponse.status}`);
+      } catch (inError) {
+        console.error('[testAdzunaConnection] India endpoint failed:', inError);
+      }
+      
       return { isConnected: true };
     } catch (error: any) {
+      console.error('[testAdzunaConnection] Connection test failed:');
+      if (axios.isAxiosError(error)) {
+        console.error('Request URL:', error.config?.url);
+        console.error('Request Params:', error.config?.params);
+        console.error('Response status:', error.response?.status);
+        console.error('Response data:', error.response?.data);
+      } else {
+        console.error('Non-Axios error:', error);
+      }
+      
       return {
         isConnected: false,
         error: error.response?.data?.error || error.message

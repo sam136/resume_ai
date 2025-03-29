@@ -59,7 +59,8 @@ def upload_resume():
         
         # Optionally, save metadata or additional data
         data = request.form.to_dict()
-        new_id = max(resumes.keys(), default=0) + 1
+        # new_id = max(resumes.keys(), default=0) + 1
+        new_id = -1
         # resumes[new_id] = {'file_path': file_path, **data}
         
         res = rh.do(file_path)

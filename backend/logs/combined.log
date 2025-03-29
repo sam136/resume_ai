@@ -69,3 +69,15 @@
 {"level":"info","message":"Attempting AI analysis...","timestamp":"2025-03-28T05:40:34.551Z"}
 {"atsKeywords":["Python","SDE","MERN","FullStack"],"atsScore":88,"content":"\n\n","education":[],"experience":[],"keywords":[],"level":"info","message":"Creating resume with data:","parsedData":{"atsScore":0,"keywords":{},"rawText":""},"personalInfo":{"email":"test1@example.com","firstName":"Test1","lastName":"User","location":"Not Specified","phone":"Not Specified","title":"Resume 3/28/2025"},"skills":[],"timestamp":"2025-03-28T05:40:43.574Z","title":"Resume 3/28/2025","userId":"67d7d4c097fffc5f1742e00c"}
 {"level":"info","message":"Resume saved successfully:","resumeId":"67e6365bf78a91e3d4cd8089","timestamp":"2025-03-28T05:40:43.848Z","userId":"67d7d4c097fffc5f1742e00c"}
+{"fileSize":130934,"fileType":"application/pdf","level":"info","message":"Starting resume parse","originalName":"Resume-saumya-mehta-Data Engineer-ML.pdf-1.pdf","timestamp":"2025-03-28T19:30:25.403Z"}
+{"level":"info","message":"Resume saved to database","resumeId":"67e6f8d14fb443b880593268","timestamp":"2025-03-28T19:30:25.571Z"}
+{"fileSize":130934,"fileType":"application/pdf","level":"info","message":"Starting resume parse","originalName":"Resume-saumya-mehta-Data Engineer-ML.pdf-1.pdf","timestamp":"2025-03-28T19:30:44.614Z"}
+{"level":"info","message":"Resume saved to database","resumeId":"67e6f8e44fb443b88059326d","timestamp":"2025-03-28T19:30:44.713Z"}
+{"fileSize":130934,"fileType":"application/pdf","level":"info","message":"Starting resume parse","originalName":"Resume-saumya-mehta-Data Engineer-ML.pdf-1.pdf","timestamp":"2025-03-28T19:34:44.021Z"}
+{"level":"info","message":"Resume saved to database","resumeId":"67e6f9d44fb443b8805932a2","timestamp":"2025-03-28T19:34:44.192Z"}
+{"fileSize":119657,"fileType":"application/pdf","level":"info","message":"Starting resume parse","originalName":"resume.pdf","timestamp":"2025-03-28T19:36:21.266Z"}
+{"level":"info","message":"Resume saved to database","resumeId":"67e6fa354fb443b8805932d6","timestamp":"2025-03-28T19:36:21.425Z"}
+{"fileSize":41719,"fileType":"application/pdf","level":"info","message":"Starting resume parse","originalName":"White and Black  Modern New Graduate Professional Resume (1).pdf","timestamp":"2025-03-28T19:43:41.347Z"}
+{"level":"info","message":"Resume saved to database","resumeId":"67e6fbed4fb443b8805932e6","timestamp":"2025-03-28T19:43:41.469Z"}
+{"atsKeywords":["Python","SDE","MERN","FullStack"],"atsScore":78,"education":[],"experience":[],"level":"info","message":"Creating resume with data:","parsedData":{"atsScore":0,"keywords":{},"rawText":""},"personalInfo":{"email":"test1@example.com","firstName":"Test1","lastName":"User","location":"Not Specified","phone":"Not Specified","title":"Resume 3/29/2025"},"skills":[],"timestamp":"2025-03-28T19:43:48.771Z","title":"Resume 3/29/2025","userId":"67d7d4c097fffc5f1742e00c"}
+{"level":"info","message":"Resume saved successfully:","resumeId":"67e6fbf44fb443b8805932ea","timestamp":"2025-03-28T19:43:48.819Z","userId":"67d7d4c097fffc5f1742e00c"}

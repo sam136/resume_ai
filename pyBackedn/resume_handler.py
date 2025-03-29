@@ -3,9 +3,13 @@ import json
 import re
 from pdfminer.high_level import extract_text
 import fitz 
+import google.generativeai as genai
 
-API_KEY = "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"
-API_URL = "https://openrouter.ai/api/v1/chat/completions"
+# Replace with your Gemini API key
+API_KEY = "AIzaSyAhnIwkj3nVTWP3arBxz63GL1LI6_Srr4A"
+
+# Configure the Gemini SDK
+genai.configure(api_key=API_KEY)
 
 def extract_hyperlinks(pdf_path):
     doc = fitz.open(pdf_path)
@@ -38,80 +42,35 @@ def extract_json(response_text):
 
 def get_resume_analysis(resume_text, resume_links):
     """
-    Sends resume text to the API and returns the analysis result.
+    Sends resume text to the Gemini API and returns the analysis result.
     """
-    prompt = f"""
-You are an expert resume analyzer. You must produce valid JSON output and ensure all URLs are valid and relevant to the recommended courses. Additionally, you must tailor job roles to the candidate’s experience level. For example, if the resume indicates an entry-level or student background, include junior- or intern-level job roles (e.g., 'Data Science Intern', 'Junior Data Scientist', 'Machine Learning Intern') rather than exclusively senior positions.
-
-Evaluation Criteria for Resume Score:
-- Formatting and structure (clear sections, bullet points)
-- ATS Optimization (use of industry-relevant keywords)
-- Content Quality (clarity, conciseness, grammar)
-- Relevance (matching skills and experience)
-- Readability and presentation
-
-Return the JSON structure as follows:
-{{
-    "basic_info": {{
-        "name": string,
-        "email": string,
-        "mobile": string,
-        "address": string
-    }},
-    "skills": {{
-        "current_skills": list of at least 5 key skills,
-        "recommended_skills": list of at least 5 skills for improvement
-    }},
-    "course_recommendations": list of at least 5 courses with details as:
-    {{
-        "platform": string,
-        "course_name": string,
-        "link": valid URL (ensure this is an active, relevant course URL)
-    }},
-    "appreciation": list of at least 5 personalized positive comments,
-    "resume_tips": list of at least 5 suggestions for improvement,
-    "resume_score": string (score in "XX/100" format),
-    "ai_resume_summary": string (a concise summary for ATS optimization),
-    "matching_job_roles": list of 2-3 job roles specifically relevant to the candidate’s experience level,
-    "ats_keywords": list of at least 5 industry-relevant keywords,
-    "project_suggestions": {{
-        "improvement_tips": list of 2-3 tips to enhance existing projects,
-        "new_project_recommendations": list of 2-3 suggested projects
-    }}
-}}
-
-Ensure the JSON is valid before outputting.
-
-Here is the resume text:
-\"\"\"{resume_text}\"\"\"
-"""
-
-    with open("prompt", "r") as f:
-        prompt = f.read()
-    prompt = prompt.replace('{0}', resume_text).replace('{1}', json.dumps(resume_links))
-
-    headers = {
-        "Authorization": f"Bearer {API_KEY}",
-        "Content-Type": "application/json"
-    }
-    payload = {
-        "model": "google/gemini-2.0-flash-lite-preview-02-05:free",
-        "messages": [{"role": "user", "content": prompt}]
-    }
-    response = requests.post(API_URL, headers=headers, json=payload)
-    if response.status_code == 200:
-        try:
-            j = response.json()
-            print(j['choices'][0].keys())
-            raw_response = j["choices"][0]["message"]["content"]
-            data = extract_json(raw_response)
-            if "error" in data:
-                return {"error": "No valid JSON found in API response."}
-            return data
-        except Exception as e:
-            return {"error": f"Error during JSON extraction: {e}"}
-    else:
-        return {"error": f"API Error {response.status_code}: {response.text}"}
+    try:
+        # Load prompt template from file
+        with open("prompt", "r") as f:
+            prompt = f.read()
+        
+        # Replace placeholders with actual content
+        prompt = prompt.replace('{0}', resume_text).replace('{1}', json.dumps(resume_links))
+        
+        # Initialize the Gemini model (using Gemini 1.5 Flash)
+        model = genai.GenerativeModel('gemini-2.0-flash')
+        
+        # Generate response from Gemini
+        response = model.generate_content(prompt)
+        
+        # Extract the text from the response
+        raw_response = response.text
+        
+        # Extract JSON from the response text
+        data = extract_json(raw_response)
+        
+        if "error" in data:
+            return {"error": "No valid JSON found in API response."}
+        
+        return data
+    
+    except Exception as e:
+        return {"error": f"Error during API request or JSON extraction: {e}"}
 
 
 def do(uploaded_file):

@@ -1,3 +1,2 @@
 users = {}
-resumes = {}
 jobs = {}

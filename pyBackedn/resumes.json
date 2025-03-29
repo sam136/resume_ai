@@ -153,5 +153,204 @@
                 "Build a simple e-commerce website using a MERN stack to gain hands-on experience."
             ]
         }
+    },
+    "67e781628cdd3a5efa10be96": {
+        "basicInfo": {
+            "name": "Samarth Chauhan",
+            "email": "samarthchauhan7@gmail.com",
+            "mobile": "+91 9426824765",
+            "address": "Gujarat, India"
+        },
+        "atsScore": "78/100",
+        "aiResumeSummary": "A highly motivated and skilled Software Engineer with experience in Flutter development, backend development using Golang and Python, and database management. Proven ability to optimize app performance, develop reusable components, and implement complex projects. Possesses a strong foundation in data structures, algorithms, and various developer tools. Actively involved in tech communities and demonstrates leadership skills. Seeking a challenging role to leverage technical expertise and contribute to innovative projects.",
+        "relevantSkillsScore": [
+            {
+                "skill": "Flutter",
+                "score": 85
+            },
+            {
+                "skill": "Python",
+                "score": 80
+            },
+            {
+                "skill": "Golang",
+                "score": 75
+            },
+            {
+                "skill": "Git",
+                "score": 80
+            },
+            {
+                "skill": "Firebase",
+                "score": 70
+            },
+            {
+                "skill": "REST API",
+                "score": 75
+            },
+            {
+                "skill": "MongoDB",
+                "score": 70
+            }
+        ],
+        "jobLevelScore": [
+            {
+                "level": "Entry Level",
+                "score": 85
+            },
+            {
+                "level": "Mid Level",
+                "score": 65
+            },
+            {
+                "level": "Intern",
+                "score": 90
+            }
+        ],
+        "careerGrowthTrajectory": [
+            {
+                "currentRole": "Flutter Developer Intern",
+                "nextRole": "Software Engineer",
+                "futureRoles": [
+                    "Senior Software Engineer",
+                    "Team Lead",
+                    "Software Architect"
+                ],
+                "suggestions": [
+                    "Contribute to open-source projects to showcase expertise.",
+                    "Obtain relevant certifications to demonstrate proficiency.",
+                    "Network with industry professionals to explore opportunities."
+                ]
+            }
+        ],
+        "matchingJobRoles": [
+            "Junior Software Engineer",
+            "Flutter Developer",
+            "Backend Developer (Python/Golang)",
+            "Mobile App Developer",
+            "Software Development Engineer (SDE)",
+            "Data Engineer",
+            "Full Stack Developer"
+        ],
+        "atsKeywords": [
+            "Flutter",
+            "Python",
+            "Golang",
+            "Dart",
+            "C/C++",
+            "Git",
+            "Docker",
+            "Linux",
+            "REST API",
+            "RabbitMQ",
+            "GraphQL",
+            "FastAPI",
+            "FlaskAPI",
+            "TFLite",
+            "Firebase",
+            "NodeJS",
+            "BeautifulSoup",
+            "SQLite",
+            "MySQL",
+            "MongoDB",
+            "Load Balancer",
+            "API Integration",
+            "State Management",
+            "UX/UI Design",
+            "Firebase",
+            "RazorPay",
+            "Messaging Queueing",
+            "Asymmetric Encryption",
+            "HTTP Routing",
+            "Scalability",
+            "Fault Tolerance"
+        ],
+        "skills": {
+            "currentSkills": [
+                "Golang",
+                "Python",
+                "Dart",
+                "C/C++",
+                "Git",
+                "Docker",
+                "Linux",
+                "REST API",
+                "RabbitMQ",
+                "GraphQL",
+                "FastAPI",
+                "FlaskAPI",
+                "Flutter",
+                "TFLite",
+                "Firebase",
+                "NodeJS",
+                "BeautifulSoup",
+                "SQLite",
+                "MySQL",
+                "MongoDB",
+                "API Integration",
+                "State Management",
+                "UX/UI Design"
+            ],
+            "recommendedSkills": [
+                "Kubernetes",
+                "AWS/Azure/GCP",
+                "CI/CD",
+                "System Design",
+                "gRPC",
+                "Advanced Data Structures and Algorithms",
+                "Security Practices (OWASP)"
+            ]
+        },
+        "courseRecommendations": [
+            {
+                "platform": "Coursera",
+                "course_name": "Google Cloud Platform Fundamentals: Core Infrastructure",
+                "link": "https://www.coursera.org/learn/gcp-infrastructure"
+            },
+            {
+                "platform": "edX",
+                "course_name": "Introduction to Kubernetes",
+                "link": "https://www.edx.org/course/introduction-to-kubernetes"
+            },
+            {
+                "platform": "Udemy",
+                "course_name": "Docker and Kubernetes: The Complete Guide",
+                "link": "https://www.udemy.com/course/docker-and-kubernetes-the-complete-guide/"
+            },
+            {
+                "platform": "AWS Training",
+                "course_name": "AWS Certified Developer \u2013 Associate",
+                "link": "https://aws.amazon.com/training/certification/?nc2=h_ls"
+            },
+            {
+                "platform": "Udemy",
+                "course_name": "System Design Interview",
+                "link": "https://www.udemy.com/course/system-design-interview/"
+            }
+        ],
+        "appreciation": [
+            "Strong foundation in both mobile and backend development.",
+            "Demonstrated ability to learn and adapt to new technologies.",
+            "Active participation in tech communities showcasing passion and engagement."
+        ],
+        "resumeTips": [
+            "Quantify achievements whenever possible to demonstrate impact (e.g., 'Improved app performance by X%').",
+            "Tailor the resume to specific job descriptions, highlighting the most relevant skills and experiences.",
+            "Add a brief personal statement or summary to showcase your career goals and highlight key strengths.",
+            "Include links to GitHub repositories to showcase project work. Ensure repo's have good READMEs.",
+            "Consider adding a section on 'Awards and Recognition' to highlight achievements."
+        ],
+        "projectSuggestions": {
+            "improvementTips": [
+                "Add more detailed documentation to the GitHub repositories, including setup instructions and usage examples.",
+                "Incorporate unit tests into your projects to ensure code quality and reliability.",
+                "Explore adding CI/CD pipelines to automate the build, test, and deployment processes for projects."
+            ],
+            "newProjectRecommendations": [
+                "Develop a REST API using Golang and a database like PostgreSQL, focusing on authentication and authorization.",
+                "Create a mobile application using Flutter that integrates with a cloud service like Firebase or AWS Amplify.",
+                "Build a containerized application using Docker and deploy it to a Kubernetes cluster."
+            ]
+        }
     }
 }

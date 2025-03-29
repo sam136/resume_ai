@@ -124,6 +124,43 @@ const Dashboard = () => {
       });
     }
 
+    // Add hardcoded optimization tips if we don't have any resume-specific ones
+    if (tips.length === 0) {
+      const hardcodedTips = [
+        {
+          id: 'tip-1',
+          type: 'high' as const,
+          title: 'Keyword Optimization',
+          description: 'Include industry-specific keywords from the job description to improve ATS compatibility.'
+        },
+        {
+          id: 'tip-2',
+          type: 'medium' as const,
+          title: 'Format Simplification',
+          description: 'Use simple formatting and standard fonts to ensure ATS can properly parse your resume.'
+        },
+        {
+          id: 'tip-3',
+          type: 'medium' as const,
+          title: 'Quantify Achievements',
+          description: 'Use numbers and percentages to demonstrate your impact in previous roles.'
+        },
+        {
+          id: 'tip-4',
+          type: 'low' as const,
+          title: 'Skills Section',
+          description: 'Maintain an updated technical skills section that reflects your current capabilities.'
+        },
+        {
+          id: 'tip-5',
+          type: 'high' as const,
+          title: 'Tailor Your Resume',
+          description: 'Customize your resume for each job application to highlight relevant experience.'
+        }
+      ];
+      return hardcodedTips.slice(0, 3);
+    }
+
     return tips.slice(0, 3);
   }, [userResumes]);
 

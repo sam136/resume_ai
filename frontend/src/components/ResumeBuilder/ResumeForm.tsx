@@ -14,16 +14,41 @@ const ResumeForm: React.FC<ResumeFormProps> = ({ data, onChange }) => {
   };
 
   const addListItem = (section: 'experience' | 'education' | 'projects') => {
-    const newItem = {
-      id: crypto.randomUUID(),
-      title: '',
-      company: '',
-      location: '',
-      startDate: '',
-      endDate: '',
-      highlights: [],
-      keywords: [],
-    };
+    let newItem;
+    
+    if (section === 'experience') {
+      newItem = {
+        id: crypto.randomUUID(),
+        title: 'Software Engineer',
+        company: 'Tech Company',
+        location: 'San Francisco, CA',
+        startDate: '2022-01',
+        endDate: 'Present',
+        highlights: ['Developed new features', 'Collaborated with cross-functional teams'],
+        keywords: ['React', 'TypeScript', 'Node.js'],
+      };
+    } else if (section === 'education') {
+      newItem = {
+        id: crypto.randomUUID(),
+        institution: 'University Name',
+        degree: 'Bachelor of Science',
+        field: 'Computer Science',
+        location: 'Boston, MA',
+        gpa: '3.8',
+        startDate: '2018-09',
+        endDate: '2022-05',
+        highlights: ['Graduated with honors', 'Relevant coursework: Data Structures, Algorithms']
+      };
+    } else { // projects
+      newItem = {
+        id: crypto.randomUUID(),
+        name: 'Project Name',
+        description: 'A brief description of the project and its purpose.',
+        url: 'https://github.com/yourusername/project',
+        highlights: ['Key feature or achievement', 'Another key accomplishment'],
+        keywords: ['React', 'Firebase', 'Material UI'],
+      };
+    }
 
     handleSectionChange(section, [...(data[section] || []), newItem]);
   };

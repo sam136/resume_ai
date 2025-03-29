@@ -4,7 +4,177 @@ import resumeService from '../../services/resumeService';
 import analysisService, { AnalysisResult } from '../../services/analysisService';
 import fileService from '../../services/fileService';
 
+// Sample resume data for demo purposes
+const demoResumeData = {
+  title: 'Full Stack Developer Resume',
+  personalInfo: {
+    firstName: 'Alex',
+    lastName: 'Morgan',
+    email: 'alex.morgan@example.com',
+    phone: '(555) 123-4567',
+    location: 'San Francisco, CA',
+    title: 'Senior Full Stack Developer',
+    summary: 'Passionate full stack developer with 5+ years of experience building scalable web applications. Proficient in React, Node.js, and cloud technologies with a strong focus on performance optimization and user experience.',
+    website: 'https://alexmorgan.dev',
+    linkedin: 'linkedin.com/in/alexmorgan',
+    github: 'github.com/alexmorgan'
+  },
+  experience: [
+    {
+      id: '1',
+      title: 'Senior Full Stack Developer',
+      company: 'TechInnovate Solutions',
+      location: 'San Francisco, CA',
+      startDate: '2021-03',
+      endDate: 'Present',
+      highlights: [
+        'Led a team of 5 developers to rebuild the company\'s flagship product, resulting in a 40% increase in user engagement',
+        'Architected and implemented a microservices solution that reduced server costs by 35%',
+        'Optimized front-end performance, improving page load times by 60%',
+        'Implemented CI/CD pipelines using GitHub Actions, reducing deployment time by 75%'
+      ],
+      keywords: ['React', 'Node.js', 'TypeScript', 'AWS', 'Docker', 'MongoDB']
+    },
+    {
+      id: '2',
+      title: 'Full Stack Developer',
+      company: 'DataVision Inc.',
+      location: 'Oakland, CA',
+      startDate: '2018-06',
+      endDate: '2021-02',
+      highlights: [
+        'Developed RESTful APIs and WebSocket services for real-time data visualization',
+        'Built responsive dashboard interfaces viewed by over 10,000 daily users',
+        'Collaborated with data science team to implement machine learning features',
+        'Reduced database query times by 45% through optimization techniques'
+      ],
+      keywords: ['JavaScript', 'Express', 'PostgreSQL', 'Redis', 'React', 'D3.js']
+    },
+    {
+      id: '3',
+      title: 'Junior Web Developer',
+      company: 'CreativeWeb Studios',
+      location: 'Berkeley, CA',
+      startDate: '2016-09',
+      endDate: '2018-05',
+      highlights: [
+        'Developed and maintained client websites using modern front-end frameworks',
+        'Created custom WordPress themes and plugins for small business clients',
+        'Optimized site performance and implemented SEO best practices',
+        'Participated in UX research and design sprints'
+      ],
+      keywords: ['HTML/CSS', 'JavaScript', 'WordPress', 'PHP', 'SEO']
+    }
+  ],
+  education: [
+    {
+      id: '1',
+      institution: 'University of California, Berkeley',
+      degree: 'Master of Science',
+      field: 'Computer Science',
+      location: 'Berkeley, CA',
+      gpa: '3.9',
+      startDate: '2014-08',
+      endDate: '2016-05',
+      highlights: [
+        'Specialization in Artificial Intelligence and Machine Learning',
+        'Graduate Research Assistant in the Human-Computer Interaction Lab',
+        'Published paper on "Optimizing User Interfaces Through Machine Learning"'
+      ]
+    },
+    {
+      id: '2',
+      institution: 'Stanford University',
+      degree: 'Bachelor of Science',
+      field: 'Computer Engineering',
+      location: 'Stanford, CA',
+      gpa: '3.7',
+      startDate: '2010-09',
+      endDate: '2014-06',
+      highlights: [
+        'Graduated with honors',
+        'Member of ACM and IEEE student chapters',
+        'Teaching Assistant for Introduction to Data Structures'
+      ]
+    }
+  ],
+  projects: [
+    {
+      id: '1',
+      name: 'HealthTracker Pro',
+      description: 'A full-stack health monitoring application that integrates with wearable devices to track fitness metrics and provide personalized recommendations.',
+      url: 'https://github.com/alexmorgan/health-tracker',
+      highlights: [
+        'Implemented OAuth 2.0 authentication for secure data access',
+        'Built a real-time dashboard using WebSockets and D3.js',
+        'Developed RESTful APIs for device integration',
+        'Implemented machine learning algorithms for personalized recommendations'
+      ],
+      keywords: ['React', 'Node.js', 'MongoDB', 'WebSockets', 'Machine Learning', 'OAuth 2.0']
+    },
+    {
+      id: '2',
+      name: 'E-commerce Microservices Platform',
+      description: 'A distributed e-commerce platform built with microservices architecture to handle high volume transactions and provide a seamless shopping experience.',
+      url: 'https://github.com/alexmorgan/ecommerce-platform',
+      highlights: [
+        'Implemented service discovery and load balancing with Kubernetes',
+        'Built a payment processing service that handles 1000+ transactions per minute',
+        'Designed a distributed caching system to improve performance',
+        'Implemented event-driven architecture using Kafka'
+      ],
+      keywords: ['Microservices', 'Docker', 'Kubernetes', 'Kafka', 'Spring Boot', 'React']
+    },
+    {
+      id: '3',
+      name: 'CodeCollaborate',
+      description: 'An open-source collaborative code editor that allows multiple developers to work on the same codebase in real-time.',
+      url: 'https://github.com/alexmorgan/code-collaborate',
+      highlights: [
+        'Implemented operational transformation for conflict resolution',
+        'Built a plugin system for customizable IDE features',
+        'Created a secure multi-user authentication system',
+        'Developed syntax highlighting for 15+ programming languages'
+      ],
+      keywords: ['WebRTC', 'Socket.IO', 'React', 'Monaco Editor', 'Express', 'PostgreSQL']
+    }
+  ],
+  skills: [
+    {
+      id: '1',
+      name: 'Front-end Development',
+      level: 'Expert',
+      keywords: ['React', 'TypeScript', 'Redux', 'HTML5', 'CSS3', 'Webpack']
+    },
+    {
+      id: '2',
+      name: 'Back-end Development',
+      level: 'Expert',
+      keywords: ['Node.js', 'Express', 'Python', 'Java', 'Spring Boot', 'GraphQL', 'REST']
+    },
+    {
+      id: '3',
+      name: 'Database Technologies',
+      level: 'Advanced',
+      keywords: ['MongoDB', 'PostgreSQL', 'Redis', 'Elasticsearch', 'SQL', 'NoSQL']
+    },
+    {
+      id: '4',
+      name: 'DevOps & Cloud',
+      level: 'Advanced',
+      keywords: ['AWS', 'Docker', 'Kubernetes', 'CI/CD', 'GitHub Actions', 'Terraform']
+    },
+    {
+      id: '5',
+      name: 'Software Architecture',
+      level: 'Advanced',
+      keywords: ['Microservices', 'Event-driven', 'Domain-driven design', 'System design']
+    }
+  ]
+};
+
 const ResumeBuilder: React.FC = () => {
+  // Start with empty data instead of pre-filled
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [jobDescription, setJobDescription] = useState('');
@@ -15,8 +185,25 @@ const ResumeBuilder: React.FC = () => {
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [resumeId, setResumeId] = useState<string | null>(null);
-  
+
   const navigate = useNavigate();
+  
+  // Function to load demo data
+  const loadDemoData = () => {
+    setTitle(demoResumeData.title);
+    setContent(JSON.stringify(demoResumeData, null, 2));
+    setJobDescription('Senior Full Stack Developer with 5+ years of experience in React, Node.js, and cloud technologies. Experience with microservices architecture and containerization. Strong knowledge of database optimization and front-end performance techniques.');
+    setAnalysis({
+      score: 85,
+      feedback: "Strong technical resume with excellent project descriptions and clear demonstration of impact. Good alignment with the target role's requirements.",
+      suggestions: [
+        "Consider quantifying more achievements in your experience section",
+        "Add specific performance metrics for your projects",
+        "Include certifications related to cloud technologies"
+      ],
+      keywordMatches: ["React", "Node.js", "TypeScript", "AWS", "Docker", "Microservices", "Full Stack", "MongoDB"]
+    });
+  };
   
   const handleSave = async () => {
     if (!title || !content) {
@@ -114,9 +301,17 @@ const ResumeBuilder: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div>
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2" htmlFor="title">
-              Resume Title
-            </label>
+            <div className="flex justify-between items-center mb-2">
+              <label className="block text-gray-700" htmlFor="title">
+                Resume Title
+              </label>
+              <button
+                onClick={loadDemoData}
+                className="px-3 py-1 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+              >
+                Load Demo Data
+              </button>
+            </div>
             <input
               type="text"
               id="title"

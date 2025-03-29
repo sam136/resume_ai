@@ -1,29 +1,28 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Save, Eye, Download } from 'lucide-react';
+import { Save, Download, X } from 'lucide-react';
 import type { RootState } from '../../store';
 import { updateResume, addResume } from '../../store/resumeSlice';
 import ResumeForm from './ResumeForm';
 import ResumePreview from './ResumePreview';
 import TemplateSelector from './TemplateSelector';
+import PDFExport from '../export/PDFExport';
+import DocxExport from '../export/DocxExport';
 import type { ResumeData } from '../../types';
 import { LoadingState, initialLoadingState, handleAsyncOperation } from '../../types/loading';
 
 const templates = [
   { 
     id: 'modern', 
-    name: 'Modern', 
-    description: 'Clean and contemporary design with a focus on readability' 
+    name: 'Modern'
   },
   { 
     id: 'professional', 
-    name: 'Professional', 
-    description: 'Traditional layout perfect for corporate positions' 
+    name: 'Professional'
   },
   { 
     id: 'basic', 
-    name: 'Basic', 
-    description: 'Simple and straightforward design that works for any industry' 
+    name: 'Basic'
   },
 ];
 
@@ -50,9 +49,9 @@ const ResumeBuilder = () => {
     }
   );
   const [activeTemplate, setActiveTemplate] = useState('modern');
-  const [showPreview, setShowPreview] = useState(false);
   const [previewScale, setPreviewScale] = useState(0.8);
   const [{ isLoading, error }, setLoadingState] = useState<LoadingState>(initialLoadingState);
+  const [showExportModal, setShowExportModal] = useState(false);
 
   const handleSave = async () => {
     const updatedResume: ResumeData = {
@@ -77,23 +76,19 @@ const ResumeBuilder = () => {
   };
 
   const handleExport = () => {
-    // Export functionality would be implemented here
-    // Could support PDF, DOCX, etc.
+    setShowExportModal(true);
+  };
+
+  const closeExportModal = () => {
+    setShowExportModal(false);
   };
 
   return (
     <div className="h-full flex">
-      <div className={`flex-1 overflow-auto p-6 ${showPreview ? 'hidden lg:block' : ''}`}>
+      <div className="flex-1 overflow-auto p-6 lg:w-1/2">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-semibold text-gray-900">Resume Builder</h1>
           <div className="flex space-x-4">
-            <button
-              onClick={() => setShowPreview(!showPreview)}
-              className="flex items-center px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
-            >
-              <Eye className="h-5 w-5 mr-2" />
-              {showPreview ? 'Hide Preview' : 'Show Preview'}
-            </button>
             <button
               onClick={handleExport}
               className="flex items-center px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
@@ -129,24 +124,72 @@ const ResumeBuilder = () => {
         />
       </div>
 
-      {(showPreview || window.innerWidth >= 1024) && (
-        <div className="w-full lg:w-1/2 h-full bg-gray-100 p-6 overflow-auto">
-          <div className="sticky top-0 z-10 bg-gray-100 pb-4 mb-4">
-            <input
-              type="range"
-              min="0.5"
-              max="1"
-              step="0.1"
-              value={previewScale}
-              onChange={(e) => setPreviewScale(parseFloat(e.target.value))}
-              className="w-full"
-            />
-          </div>
+      <div className="w-full lg:w-1/2 h-full bg-gray-100 p-6 overflow-auto">
+        <div className="sticky top-0 z-10 bg-gray-100 pb-4 mb-4">
+          <input
+            type="range"
+            min="0.5"
+            max="1"
+            step="0.1"
+            value={previewScale}
+            onChange={(e) => setPreviewScale(parseFloat(e.target.value))}
+            className="w-full"
+          />
+        </div>
+        <div id="resume-content">
           <ResumePreview
             data={resumeData}
             template={activeTemplate}
             scale={previewScale}
           />
+        </div>
+      </div>
+
+      {/* Export Modal */}
+      {showExportModal && (
+        <div className="fixed inset-0 overflow-y-auto z-50 flex items-center justify-center">
+          <div className="fixed inset-0 bg-black opacity-50" onClick={closeExportModal}></div>
+          <div className="relative bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+            {/* Modal Header */}
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-lg font-medium text-gray-900">Export Resume</h3>
+              <button 
+                type="button"
+                className="text-gray-400 hover:text-gray-500"
+                onClick={closeExportModal}
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            
+            {/* Export Options */}
+            <div className="space-y-4">
+              <p className="text-sm text-gray-500">Choose an export format below:</p>
+              
+              <div className="flex flex-col space-y-3">
+                <PDFExport 
+                  data={resumeData as Record<string, any>}
+                  filename={`${resumeData.personalInfo?.firstName || 'resume'}_${resumeData.personalInfo?.lastName || ''}`} 
+                />
+                
+                <DocxExport 
+                  data={resumeData as Record<string, any>} 
+                  filename={`${resumeData.personalInfo?.firstName || 'resume'}_${resumeData.personalInfo?.lastName || ''}`}
+                />
+              </div>
+            </div>
+            
+            {/* Close Button */}
+            <div className="mt-6 flex justify-end">
+              <button 
+                type="button"
+                onClick={closeExportModal}
+                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

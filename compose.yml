@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  react-app:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - express-api
+      - flask-api
+
+  express-api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      - flask-api
+
+  flask-api:
+    build:
+      context: ./pyBackedn
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"

@@ -4,7 +4,7 @@ import { X, Plus } from 'lucide-react';
 interface Field {
   name: string;
   label: string;
-  type: 'text' | 'email' | 'tel' | 'url' | 'month' | 'textarea' | 'list' | 'tags';
+  type: 'text' | 'email' | 'tel' | 'url' | 'month' | 'textarea' | 'list' | 'tags' | 'number';
   required?: boolean;
 }
 

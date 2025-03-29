@@ -98,7 +98,92 @@ const ResumeForm: React.FC<ResumeFormProps> = ({ data, onChange }) => {
         ))}
       </div>
 
-      {/* Similar sections for Education and Projects */}
+      {/* Education Section */}
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-lg font-medium text-gray-900">Education</h2>
+          <button
+            type="button"
+            onClick={() => addListItem('education')}
+            className="flex items-center px-3 py-1 text-sm text-indigo-600 hover:bg-indigo-50 rounded-md"
+          >
+            <Plus className="h-4 w-4 mr-1" />
+            Add Education
+          </button>
+        </div>
+        {data.education?.map((edu) => (
+          <div key={edu.id} className="relative">
+            <button
+              type="button"
+              onClick={() => removeListItem('education', edu.id)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-red-500"
+            >
+              <Trash2 className="h-5 w-5" />
+            </button>
+            <SectionEditor
+              data={edu}
+              onChange={value => {
+                handleSectionChange(
+                  'education',
+                  data.education?.map(e => (e.id === edu.id ? value : e))
+                );
+              }}
+              fields={[
+                { name: 'institution', label: 'Institution', type: 'text', required: true },
+                { name: 'degree', label: 'Degree', type: 'text', required: true },
+                { name: 'field', label: 'Field of Study', type: 'text', required: true },
+                { name: 'location', label: 'Location', type: 'text', required: true },
+                { name: 'gpa', label: 'GPA', type: 'number' },
+                { name: 'startDate', label: 'Start Date', type: 'month', required: true },
+                { name: 'endDate', label: 'End Date', type: 'month', required: true },
+                { name: 'highlights', label: 'Additional Highlights', type: 'list' }
+              ]}
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Projects Section */}
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-lg font-medium text-gray-900">Projects</h2>
+          <button
+            type="button"
+            onClick={() => addListItem('projects')}
+            className="flex items-center px-3 py-1 text-sm text-indigo-600 hover:bg-indigo-50 rounded-md"
+          >
+            <Plus className="h-4 w-4 mr-1" />
+            Add Project
+          </button>
+        </div>
+        {data.projects?.map((project) => (
+          <div key={project.id} className="relative">
+            <button
+              type="button"
+              onClick={() => removeListItem('projects', project.id)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-red-500"
+            >
+              <Trash2 className="h-5 w-5" />
+            </button>
+            <SectionEditor
+              data={project}
+              onChange={value => {
+                handleSectionChange(
+                  'projects',
+                  data.projects?.map(p => (p.id === project.id ? value : p))
+                );
+              }}
+              fields={[
+                { name: 'name', label: 'Project Name', type: 'text', required: true },
+                { name: 'url', label: 'Project URL', type: 'url' },
+                { name: 'description', label: 'Project Description', type: 'textarea', required: true },
+                { name: 'keywords', label: 'Technologies Used', type: 'tags' },
+                { name: 'highlights', label: 'Key Features & Achievements', type: 'list' }
+              ]}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

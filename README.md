@@ -62,7 +62,3 @@ resumeai/
 ## License
 
 This project is licensed under the MIT License.
-
----
-
-Would you like a separate `README.md` for each service folder (backend, frontend, pyBackend) as well?

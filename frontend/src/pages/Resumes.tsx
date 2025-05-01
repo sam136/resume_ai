@@ -5,6 +5,7 @@ import resumeService, { Resume } from '../services/resumeService';
 import { ResumeUpload } from '../components/resume/ResumeUpload';
 import { useSelector } from 'react-redux';
 import { selectIsAuthenticated } from '../store/authSlice';
+import api from '../services/api';
 
 const Resumes = () => {
   const navigate = useNavigate();
@@ -46,20 +47,82 @@ const Resumes = () => {
   };
 
   useEffect(() => {
-    fetchResumes();
+    // Check API connectivity first
+    api.testConnection().then(isConnected => {
+      if (isConnected) {
+        console.log("API server is reachable");
+        fetchResumes();
+      } else {
+        setError("Unable to connect to the API server. Please check your connection.");
+        setLoading(false);
+      }
+    });
   }, []);
 
   const fetchResumes = async () => {
     try {
+      console.log('Starting to fetch resumes');
       setLoading(true);
       setError(null);
-      const data = await resumeService.getAllResumes();
-      setResumes(data);
+      
+      // Check authentication state
+      const isTokenValid = api.checkAuthState();
+      console.log('Is authentication token valid:', isTokenValid);
+      
+      if (!isTokenValid) {
+        console.warn('Authentication token is invalid or expired');
+        setError('Authentication session expired. Please log in again.');
+        setTimeout(() => navigate('/login'), 2000);
+        return;
+      }
+      
+      // Make API call with detailed error handling
+      try {
+        const data = await resumeService.getAllResumes();
+        console.log('Resumes fetched successfully:', data);
+        
+        if (Array.isArray(data)) {
+          // If we get an empty array, let's provide more helpful information
+          if (data.length === 0) {
+            console.log('No resumes found. This could be normal if you haven\'t created any resumes yet.');
+          }
+          
+          setResumes(data);
+          console.log(`Set ${data.length} resumes in state`);
+        } else {
+          console.error('Expected array of resumes but got:', data);
+          setError('Invalid data format received from server');
+        }
+      } catch (fetchError: any) {
+        throw fetchError; // Pass to outer catch block
+      }
     } catch (err: any) {
       console.error('Failed to fetch resumes:', err);
-      setError('Failed to fetch resumes. Please try again later.');
+      
+      // More detailed error handling
+      if (err.response) {
+        console.error('Error response:', {
+          status: err.response.status,
+          data: err.response.data,
+          headers: err.response.headers
+        });
+        
+        if (err.response.status === 401) {
+          setError('Authentication error. Please log in again.');
+          // Give user time to read the error before redirecting
+          setTimeout(() => navigate('/login'), 2000);
+        } else {
+          setError(`Failed to fetch resumes: ${err.response.data?.message || err.message}`);
+        }
+      } else if (err.request) {
+        // Request was made but no response received
+        setError('No response from server. Please check your internet connection.');
+      } else {
+        setError('Failed to fetch resumes. Please try again later.');
+      }
     } finally {
       setLoading(false);
+      console.log('Finished resume fetch attempt');
     }
   };
 
@@ -152,10 +215,13 @@ const Resumes = () => {
   };
 
   const handleUploadSuccess = async (data: {
+    success: boolean;
+    resumeId: string;
     atsScore: number;
     keywords: string[];
     skills: string[];
-    matchingJobs: any[];
+    saved: boolean;
+    resumeUrl: string;
   }) => {
     try {
       if (!isAuthenticated) {
@@ -165,30 +231,21 @@ const Resumes = () => {
       setIsUploading(true);
       setUploadProgress(90);
 
-      const resumeData = {
-        title: `Resume ${new Date().toLocaleDateString()}`,
-        content: data.skills.join(", ") + "\n\n" + data.keywords.join(", "),
-        atsScore: data.atsScore,
-        keywords: data.keywords,
-        skills: data.skills,
-      };
-
-      console.log("Resume DATAQ:", resumeData);
-      console.log("Resume DATAQ:", data);
-      const savedResume = await resumeService.createResume(resumeData);
-      console.log("Resume saved successfully:", savedResume);
-
-      // Update the resume list
-      console.log("Resume saved:", savedResume);
-      setResumes((prevResumes) => [savedResume, ...prevResumes]);
-
+      // Since the resume is already saved in the backend during parsing,
+      // we just need to refresh our list of resumes
+      console.log("Resume upload successful:", data);
+      
+      // Update UI with the results
       setUploadProgress(100);
       setUploadSuccess(true);
       setUploadResults({
         atsScore: data.atsScore,
-        keywords: data.keywords,
-        skills: data.skills,
+        keywords: data.keywords || [],
+        skills: data.skills || [],
       });
+
+      // Refresh the resume list to include the new resume
+      await fetchResumes();
 
       // Close modal after 3 seconds
       setTimeout(() => {
@@ -201,11 +258,11 @@ const Resumes = () => {
         }, 300);
       }, 3000);
     } catch (err: any) {
-      console.error("Error saving resume:", err);
+      console.error("Error processing resume:", err);
       if (err.message.includes("Authentication")) {
         navigate("/login", { state: { from: "/resumes" } });
       } else {
-        setUploadError(err.message || "Failed to save resume data");
+        setUploadError(err.message || "Failed to process resume data");
       }
     } finally {
       setIsUploading(false);
@@ -263,6 +320,52 @@ const Resumes = () => {
         resume.title.toLowerCase().includes(searchQuery.toLowerCase()))
     : resumes;
 
+  // Update function to open/download the resume file
+  const openResumeFile = async (resumeId: string) => {
+    if (!resumeId) return;
+    
+    try {
+      // Show loading state
+      setError(null);
+      
+      // Get auth token
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('Authentication required. Please log in again.');
+        return;
+      }
+      
+      // Create a direct API call with authentication
+      const baseUrl = api.getBaseUrl();
+      const fileUrl = `${baseUrl}/resumes/${resumeId}/file`;
+      
+      // Use fetch with authentication headers
+      const response = await fetch(fileUrl, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch file: ${response.statusText}`);
+      }
+      
+      // Get the blob from response
+      const blob = await response.blob();
+      
+      // Create object URL and open in new tab
+      const objectUrl = URL.createObjectURL(blob);
+      window.open(objectUrl, '_blank');
+      
+      // Clean up object URL after a short delay
+      setTimeout(() => URL.revokeObjectURL(objectUrl), 5000);
+      
+    } catch (err: any) {
+      console.error('Error fetching resume file:', err);
+      setError(`Failed to open resume: ${err.message}`);
+    }
+  };
+
   if (loading) return (
     <div className="flex items-center justify-center min-h-[400px]">
       <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
@@ -304,13 +407,22 @@ const Resumes = () => {
         {/* Header */}
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-semibold text-gray-900">My Resumes</h1>
-          <button 
-            onClick={handleCreateNew}
-            className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-          >
-            <Plus className="h-5 w-5 mr-2" />
-            Create New Resume
-          </button>
+          <div className="flex space-x-2">
+            <button 
+              onClick={() => api.testConnection().then(() => fetchResumes())}
+              className="flex items-center px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
+              title="Test connection and refresh"
+            >
+              Refresh
+            </button>
+            <button 
+              onClick={handleCreateNew}
+              className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+            >
+              <Plus className="h-5 w-5 mr-2" />
+              Create New Resume
+            </button>
+          </div>
         </div>
 
         {/* Search and Actions - removed filter button */}
@@ -378,7 +490,13 @@ const Resumes = () => {
                   <tr key={resume.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
                       <div className="flex items-center">
-                        <FileText className="h-5 w-5 text-gray-400 mr-3" />
+                        {/* Update the file icon to be clickable and have a hover effect */}
+                        <span title="View resume file">
+                          <FileText 
+                            className="h-5 w-5 text-gray-400 mr-3 cursor-pointer hover:text-blue-500 transition-colors" 
+                            onClick={() => openResumeFile(resume.id)}
+                          />
+                        </span>
                         {editingResumeId === resume.id ? (
                           <div className="flex items-center">
                             <input

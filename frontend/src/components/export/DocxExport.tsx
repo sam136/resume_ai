@@ -2,14 +2,18 @@ import React, { useState } from 'react';
 import { FileDown, Loader2 } from 'lucide-react';
 import { Document, Packer, Paragraph, TextRun } from 'docx';
 import { saveAs } from 'file-saver';
-import { showToast } from '../../utils/notifications';
 
 interface DocxExportProps {
   data: Record<string, any>;
   filename?: string;
+  onComplete?: (success: boolean, message: string) => void;
 }
 
-const DocxExport: React.FC<DocxExportProps> = ({ data, filename = 'resume' }) => {
+const DocxExport: React.FC<DocxExportProps> = ({ 
+  data, 
+  filename = 'resume',
+  onComplete = () => {}
+}) => {
   const [isExporting, setIsExporting] = useState(false);
 
   const handleExport = async () => {
@@ -38,10 +42,10 @@ const DocxExport: React.FC<DocxExportProps> = ({ data, filename = 'resume' }) =>
       const blob = await Packer.toBlob(doc);
       saveAs(blob, `${filename}.docx`);
       
-      showToast({ message: 'DOCX exported successfully!', type: 'success' });
+      onComplete(true, 'DOCX exported successfully!');
     } catch (error) {
       console.error('DOCX export failed:', error);
-      showToast({ message: 'Failed to export DOCX', type: 'error' });
+      onComplete(false, 'Failed to export DOCX');
     } finally {
       setIsExporting(false);
     }

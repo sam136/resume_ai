@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import { FileDown, Loader2 } from 'lucide-react';
 import jsPDF from 'jspdf';
-import { showToast } from '../../utils/notifications';
 import * as htmlToImage from 'html-to-image';
 
 interface PDFExportProps {
   data: Record<string, any>;
   filename?: string;
+  onComplete?: (success: boolean, message: string) => void;
 }
 
-const PDFExport: React.FC<PDFExportProps> = ({ data, filename = 'resume' }) => {
+const PDFExport: React.FC<PDFExportProps> = ({ 
+  data, 
+  filename = 'resume',
+  onComplete = () => {} 
+}) => {
   const [isExporting, setIsExporting] = useState(false);
 
   const handleExport = async () => {
@@ -28,10 +32,10 @@ const PDFExport: React.FC<PDFExportProps> = ({ data, filename = 'resume' }) => {
       pdf.addImage(imageData, 'PNG', 0, 0, pdfWidth, pdfHeight);
       pdf.save(`${filename}.pdf`);
       
-      showToast({ message: 'PDF exported successfully!', type: 'success' });
+      onComplete(true, 'PDF exported successfully!');
     } catch (error) {
       console.error('PDF export failed:', error);
-      showToast({ message: 'Failed to export PDF', type: 'error' });
+      onComplete(false, 'Failed to export PDF');
     } finally {
       setIsExporting(false);
     }

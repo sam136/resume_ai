@@ -13,11 +13,27 @@ const Login = () => {
 
   // Add this new useEffect for authentication check
   useEffect(() => {
+    // Only try to verify token if we're not already showing a session expired message
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionExpired = urlParams.get('session') === 'expired';
+    
+    if (sessionExpired) {
+      dispatch(setError('Your session has expired. Please login again.'));
+      // Clean up URL and token
+      localStorage.removeItem('token');
+      window.history.replaceState({}, document.title, '/login');
+      return;
+    }
+    
     const token = localStorage.getItem('token');
     if (token) {
+      // Set loading state while verifying
+      dispatch(setLoading(true));
+      
       // If token exists, verify it and redirect
       authService.verifyToken(token)
         .then((response) => {
+          console.log('Token verified successfully, redirecting to dashboard');
           dispatch(setCredentials({
             user: {
               ...response.user,
@@ -27,13 +43,15 @@ const Login = () => {
                 jobAlerts: true
               }
             },
-            token
+            token: response.token || token
           }));
-          navigate('/dashboard');
+          navigate('/');
         })
-        .catch(() => {
-          // If token is invalid, remove it
+        .catch((err) => {
+          console.error('Token verification failed:', err);
+          // Invalid token - remove it but don't automatically show error
           localStorage.removeItem('token');
+          dispatch(setLoading(false));
         });
     }
   }, [navigate, dispatch]);

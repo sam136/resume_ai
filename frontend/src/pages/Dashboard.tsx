@@ -1,12 +1,14 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { FileText, Zap, Upload, X, Check, Plus } from 'lucide-react';
 import type { RootState } from '../store';
 import { LoadingState, initialLoadingState } from '../types/loading';
 import jobService from '../services/jobService';
-import resumeService, { getUserResumes, Resume } from '../services/resumeService';
+import resumeService, { Resume, getUserResumes } from '../services/resumeService';
 import { ResumeUpload } from '../components/resume/ResumeUpload';
+import { setCredentials } from '../store/authSlice';
+import authService from '../services/authService';
 
 interface DashboardMetrics {
   activeResumes: number;
@@ -37,9 +39,11 @@ interface Job {
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [{ isLoading, error }, setLoadingState] = useState<LoadingState>(initialLoadingState);
   const [userResumes, setUserResumes] = useState<Resume[]>([]);
   const user = useSelector((state: RootState) => state.auth.user);
+  const token = useSelector((state: RootState) => state.auth.token);
   const [savedJobs, setSavedJobs] = useState<Job[]>([]);
   
   // Resume upload state
@@ -58,6 +62,21 @@ const Dashboard = () => {
     const fetchDashboardData = async () => {
       setLoadingState({ isLoading: true, error: null });
       try {
+        // If we have a token but no user data, fetch the user data
+        if (token && !user) {
+          try {
+            const userData = await authService.getCurrentUser();
+            if (userData) {
+              dispatch(setCredentials({ 
+                user: userData, 
+                token 
+              }));
+            }
+          } catch (userError) {
+            console.error('Failed to fetch user data:', userError);
+          }
+        }
+
         // Fetch resumes
         const resumesResponse = await getUserResumes();
         setUserResumes(resumesResponse);
@@ -82,7 +101,7 @@ const Dashboard = () => {
     };
 
     fetchDashboardData();
-  }, []);
+  }, [token, user, dispatch]);
 
   const metrics: DashboardMetrics = useMemo(() => {
     const latestResume = userResumes
@@ -116,8 +135,8 @@ const Dashboard = () => {
       feedbackLines.forEach((line, index) => {
         tips.push({
           id: `${latestResume.id}-${index}`,
-          type: latestResume.atsScore > 70 ? 'low' : 
-                latestResume.atsScore > 40 ? 'medium' : 'high',
+          type: (latestResume.atsScore || 0) > 70 ? 'low' : 
+                (latestResume.atsScore || 0) > 40 ? 'medium' : 'high',
           title: 'ATS Recommendation',
           description: line
         });

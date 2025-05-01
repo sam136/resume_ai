@@ -7,15 +7,17 @@ export interface LoginCredentials {
 }
 
 export interface RegisterData {
-  firstName: string;  // Changed from firstname to firstName
-  lastName: string;   // Changed from lastname to lastName
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
 }
 
 export interface UpdateProfileData {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
+  phone?: string;
 }
 
 export interface AuthResponse {
@@ -25,11 +27,6 @@ export interface AuthResponse {
     email: string;
     firstName: string;
     lastName: string;
-    preferences?: {
-      theme: 'light' | 'dark' | 'system';
-      emailNotifications: boolean;
-      jobAlerts: boolean;
-    };
   }
 }
 
@@ -111,15 +108,40 @@ const authService = {
   getCurrentUser: async () => {
     const token = localStorage.getItem('token');
     console.log('Getting current user. Token exists:', !!token);
+    
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+    
     try {
+      // Ensure the token is included in the request header
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      
       const response = await api.get('/users/me');
-      console.log('Current user retrieved:', response.data.email);
-      return response.data;
-    } catch (error: unknown) {
-      console.error('Get current user failed:', error);
+      console.log('Full response object:', response);
+      
+      if (!response.data || !response.data.data || !response.data.data.user) {
+        console.error('Unexpected API response structure:', response.data);
+        throw new Error('Invalid user data in response');
+      }
+      
+      // Extract the user object from the response
+      const userData = response.data.data.user;
+      console.log('User data extracted:', userData);
+      
+      // Return the user object in the format expected by the Redux store
+      return {
+        id: userData.id,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        phone: userData.phone || '',
+        avatar: userData.avatar || '',
+      };
+    } catch (error) {
+      console.error('Error fetching current user:', error);
       // Clear invalid token
       if (axios.isAxiosError(error) && error.response?.status === 401) {
-        console.log('Clearing invalid token');
         localStorage.removeItem('token');
       }
       throw error;
@@ -129,7 +151,7 @@ const authService = {
   updateProfile: async (profileData: UpdateProfileData) => {
     console.log('Updating user profile:', profileData);
     try {
-      const response = await api.put('/users/profile', profileData);
+      const response = await api.patch('/users/me', profileData);
       return response.data;
     } catch (error: unknown) {
       console.error('Profile update failed:', error);
@@ -139,8 +161,28 @@ const authService = {
 
   verifyToken: async (token: string) => {
     try {
-      const response = await api.post<AuthResponse>('/auth/verify', { token });
-      return response.data;
+      // First try to get current user info as a verification
+      const response = await api.get('/users/me', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      // Extract user data from the nested response structure
+      const userData = response.data.data.user;
+      
+      // If we get user data back, the token is valid
+      return {
+        user: {
+          id: userData.id,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          email: userData.email,
+          avatar: userData.avatar,
+          phone: userData.phone
+        },
+        token
+      };
     } catch (error: unknown) {
       console.error('Token verification failed:', error);
       if (axios.isAxiosError(error)) {
@@ -150,6 +192,38 @@ const authService = {
       }
       throw new Error('Failed to verify token');
     }
+  },
+
+  changePassword: async (passwordData: { currentPassword: string; newPassword: string }) => {
+    try {
+      const response = await api.patch('/users/change-password', passwordData);
+      return response.data;
+    } catch (error: unknown) {
+      console.error('Password change failed:', error);
+      
+      if (axios.isAxiosError(error)) {
+        // Handle server response errors
+        if (error.response) {
+          const errorMessage = 
+            error.response.data.message || 
+            error.response.data.error || 
+            'Failed to change password';
+          throw new Error(errorMessage);
+        } else if (error.request) {
+          throw new Error('Cannot connect to server. Please check your connection.');
+        }
+      }
+      throw new Error('An unexpected error occurred during password change');
+    }
+  },
+
+  uploadAvatar: async (formData: FormData) => {
+    const response = await api.post('/users/avatar', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.data.data;
   }
 };
 

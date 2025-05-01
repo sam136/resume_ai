@@ -7,11 +7,6 @@ interface User {
   lastName: string;
   avatar?: string;
   phone?: string;
-  preferences: {
-    theme: 'light' | 'dark' | 'system';
-    emailNotifications: boolean;
-    jobAlerts: boolean;
-  };
 }
 
 interface AuthState {
@@ -23,7 +18,7 @@ interface AuthState {
 
 const initialState: AuthState = {
   user: null,
-  token: null,
+  token: localStorage.getItem('token'), // Load token from localStorage on startup
   loading: false,
   error: null,
 };
